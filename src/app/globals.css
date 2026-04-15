@@ -3,25 +3,159 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0C131C;
+  --foreground: #E8ECF2;
+  --accent: #2B6DFF;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  background: var(--background);
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+@layer base {
+  h1, h2, h3, h4 {
+    font-family: var(--font-display), "Inter", system-ui, sans-serif;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950 min-h-[48px];
+  }
+  .btn-primary {
+    @apply btn bg-accent text-white hover:bg-accent-600 shadow-cta focus-visible:ring-accent;
+  }
+  .btn-secondary {
+    @apply btn bg-white text-ink-900 hover:bg-bone focus-visible:ring-white;
+  }
+  .btn-outline {
+    @apply btn border border-white/15 text-white hover:bg-white/5 focus-visible:ring-white/50;
+  }
+  .btn-outline-dark {
+    @apply btn border border-ink-900/15 text-ink-900 hover:bg-ink-900 hover:text-white focus-visible:ring-ink-900;
+  }
+  .btn-ghost {
+    @apply btn text-white/80 hover:text-white hover:bg-white/5 focus-visible:ring-white/30;
+  }
+
+  /* Card surfaces */
+  .card-dark {
+    @apply rounded-card bg-ink-800 border border-white/5 p-6;
+  }
+  .card-light {
+    @apply rounded-card bg-white text-ink-900 shadow-light p-6;
+  }
+  .card-outline {
+    @apply rounded-card border border-white/10 bg-white/[0.02] p-6;
+  }
+  /* Legacy .card alias — now renders on dark surfaces */
+  .card {
+    @apply card-dark;
+  }
+
+  .section {
+    @apply py-20 md:py-28;
+  }
+  .section-tight {
+    @apply py-14 md:py-20;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.2em] text-accent;
+  }
+  .eyebrow-muted {
+    @apply text-[11px] font-semibold uppercase tracking-[0.2em] text-white/40;
+  }
+
+  /* Typography scale — tighter, bolder, not serif */
+  .heading-1 {
+    @apply text-[40px] leading-[1.02] md:text-6xl lg:text-7xl font-bold tracking-tightest;
+  }
+  .heading-2 {
+    @apply text-3xl md:text-5xl font-bold leading-[1.05] tracking-tightest;
+  }
+  .heading-3 {
+    @apply text-2xl md:text-3xl font-bold leading-tight tracking-tight;
+  }
+  .lead {
+    @apply text-base md:text-lg text-white/65 leading-relaxed;
+  }
+  .lead-dark {
+    @apply text-base md:text-lg text-ink-900/65 leading-relaxed;
+  }
+
+  .field-input {
+    @apply w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 outline-none text-white placeholder:text-white/30 focus:border-accent focus:ring-2 focus:ring-accent/30 min-h-[44px];
+  }
+  .field-input-light {
+    @apply w-full rounded-lg border border-ink-900/10 bg-white px-3 py-2 outline-none text-ink-900 placeholder:text-ink-900/30 focus:border-accent focus:ring-2 focus:ring-accent/30 min-h-[44px];
+  }
+
+  /* Dashed ring used for abstract backgrounds */
+  .ring-dashed {
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.12) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  .container-narrow {
+    @apply mx-auto max-w-3xl px-4 md:px-6;
+  }
+
+  /* Reveal-on-scroll utility (used with the Reveal component) */
+  [data-reveal] {
+    opacity: 0;
+    transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
+                transform 0.9s cubic-bezier(0.22,1,0.36,1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  [data-reveal="up"] { transform: translateY(28px); }
+  [data-reveal="fade"] { transform: none; }
+  [data-reveal="left"] { transform: translateX(-32px); }
+  [data-reveal="right"] { transform: translateX(32px); }
+  [data-reveal="scale"] { transform: scale(0.96); }
+  [data-reveal].revealed {
+    opacity: 1;
+    transform: translate(0) scale(1);
+  }
+
+  /* Marquee parent.
+     animation-delay gives a brief pause on first load so visitors see
+     the logos in place before they begin sliding. */
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 40s linear infinite;
+    animation-delay: 2.5s;
+  }
+  .marquee-track:hover { animation-play-state: paused; }
+}
+
+/* @keyframes must live at the top level (outside @layer) so Tailwind
+   doesn't tree-shake it. Tailwind only emits keyframes declared in its
+   config when the matching `animate-*` utility is used — we use the
+   `.marquee-track` custom class directly, so declare it ourselves. */
+@keyframes marquee {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
