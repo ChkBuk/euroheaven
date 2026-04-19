@@ -25,13 +25,13 @@ export default function LogoMarquee() {
   // Duplicate list so the translate reset is seamless.
   const items = [...brands, ...brands];
   return (
-    <section
-      className="py-10 md:py-14"
-      aria-label="European vehicle brands we service"
-    >
-      <div className="container">
+    <section aria-label="European vehicle brands we service">
+      <div className="mx-auto max-w-[1600px] px-4 md:px-8 lg:px-12">
+        <h2 className="font-display text-center text-lg md:text-xl font-medium tracking-tight text-white/85 pt-10 md:pt-14 pb-10 md:pb-14">
+          European brands we service
+        </h2>
         <div
-          className="relative overflow-hidden py-7 md:py-9"
+          className="relative overflow-hidden py-4 md:py-6"
           style={{ maskImage: fadeMask, WebkitMaskImage: fadeMask }}
         >
           <div className="marquee-track gap-14 md:gap-24">
@@ -52,6 +52,12 @@ export default function LogoMarquee() {
           </div>
         </div>
       </div>
+      {/* Faded hairline border — 70% viewport width, centered, fades to
+          transparent at both ends. */}
+      <div
+        className="mx-auto h-px w-[70%] bg-gradient-to-r from-transparent via-white/20 to-transparent mt-10 md:mt-14"
+        aria-hidden
+      />
     </section>
   );
 }

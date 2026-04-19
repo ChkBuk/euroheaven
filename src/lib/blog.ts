@@ -21,7 +21,7 @@ export const posts: Post[] = [
 
 **Service B** follows at 24 months and adds cabin filter replacement, brake fluid exchange, and a more comprehensive inspection.
 
-At ${"Euro Hevans"} we stamp your logbook using genuine Mercedes-Benz oils meeting MB 229.5, 229.51, or 229.71 depending on your engine. This is essential for warranty compliance.`,
+At ${"Euro Heaven"} we stamp your logbook using genuine Mercedes-Benz oils meeting MB 229.5, 229.51, or 229.71 depending on your engine. This is essential for warranty compliance.`,
   },
   {
     slug: "common-w205-issues",
@@ -55,7 +55,7 @@ Book a W205 health check if you're approaching 100,000km.`,
 - Genuine or OEM-equivalent parts
 - Manufacturer service schedules
 
-At ${"Euro Hevans"} every service meets or exceeds Mercedes-Benz requirements and is fully logbook-stamped. Thousands of Melbourne owners have come to us from the dealer with full warranty intact.`,
+At ${"Euro Heaven"} every service meets or exceeds Mercedes-Benz requirements and is fully logbook-stamped. Thousands of Melbourne owners have come to us from the dealer with full warranty intact.`,
   },
 ];
 

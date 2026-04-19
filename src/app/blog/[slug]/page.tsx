@@ -4,17 +4,21 @@ import type { Metadata } from "next";
 import { Clock, ChevronLeft, ArrowUpRight } from "lucide-react";
 import { posts, getPost } from "@/lib/blog";
 import Reveal from "@/components/Reveal";
+import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
 export function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({
+type RouteParams = Promise<{ slug: string }>;
+
+export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
-}): Metadata {
-  const p = getPost(params.slug);
+  params: RouteParams;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const p = getPost(slug);
   if (!p) return { title: "Not found" };
   return {
     title: p.title,
@@ -23,12 +27,19 @@ export function generateMetadata({
   };
 }
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
-  const p = getPost(params.slug);
+export default async function BlogPost({ params }: { params: RouteParams }) {
+  const { slug } = await params;
+  const p = getPost(slug);
   if (!p) notFound();
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Blog", path: "/blog" },
+          { name: p.title, path: `/blog/${p.slug}` },
+        ]}
+      />
       <article className="section bg-ink-950">
         <div className="container-narrow">
           <Link

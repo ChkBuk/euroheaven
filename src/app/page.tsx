@@ -6,14 +6,18 @@ import {
   Phone,
   CheckCircle2,
   Shield,
-  Wrench,
   Sparkles,
+  Wrench,
+  ShieldCheck,
+  BookOpen,
+  GraduationCap,
+  Receipt,
   Car,
+  MessageSquare,
+  HelpCircle,
 } from "lucide-react";
 import { site } from "@/lib/site";
-import { services } from "@/lib/services";
 import { img } from "@/lib/images";
-import ServiceIcon from "@/components/ServiceIcon";
 import FAQ from "@/components/FAQ";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
@@ -21,6 +25,8 @@ import WorkingProcess from "@/components/WorkingProcess";
 import Newsletter from "@/components/Newsletter";
 import LogoMarquee from "@/components/LogoMarquee";
 import HeroVideo from "@/components/HeroVideo";
+import ServicesScrolly from "@/components/ServicesScrolly";
+import InitialScrollSnap from "@/components/InitialScrollSnap";
 
 const testimonials = [
   {
@@ -56,6 +62,14 @@ const faqs = [
     a: "No. Under Australian Consumer Law, using an independent specialist with approved parts and fluids does not void your Mercedes warranty.",
   },
   {
+    q: "What's the difference between Service A and Service B?",
+    a: "Service A is the basic interval (usually ~15,000 km): oil and filter change, brake inspection, and a diagnostic scan. Service B adds cabin filters, fluid top-ups, and a full multi-point check (usually ~30,000 km). We follow the MB factory schedule so your log-book stays compliant.",
+  },
+  {
+    q: "Do you work on AMG and performance models?",
+    a: "Yes — from C63 AMG to GT R and S-Class AMG line. We service carbon-ceramic brakes, Bilstein and air suspension, AMG-spec fluids, and handle dyno-verified performance tuning within factory tolerances.",
+  },
+  {
     q: "Do you offer courtesy vehicles?",
     a: "Yes — on request, subject to availability. Please indicate this when you book.",
   },
@@ -68,13 +82,24 @@ const faqs = [
 export default function Home() {
   return (
     <>
-      {/* ============ HERO (full-bleed video) ============ */}
-      <section className="relative -mt-16 md:-mt-20 h-[88vh] min-h-[640px] max-h-[920px] overflow-hidden bg-ink-950">
+      <InitialScrollSnap targetId="services-scrolly" />
+
+      {/* ============ HERO + MARQUEE (together fill one viewport) ============ */}
+      {/* The -mt-16/-20 pulls the wrapper up by the header's flow height so
+          wrapper_top = document y 0. Then min-h-screen/dvh = 100vh makes the
+          wrapper end exactly at the viewport bottom. Hero video bleeds behind
+          the transparent header at the top; LogoMarquee sits at the bottom
+          of the viewport. overflow-hidden guards against content bleed on
+          ultra-short viewports. */}
+      <div className="-mt-16 md:-mt-20 relative min-h-screen min-h-dvh flex flex-col bg-ink-950 overflow-hidden lg:snap-start">
+      <section className="group relative isolate flex-1 min-h-0 overflow-hidden">
         <HeroVideo />
 
-        {/* Content overlay */}
-        <div className="relative h-full container flex items-center pt-16 md:pt-20">
-          <div className="max-w-2xl">
+        {/* Content overlay — top-anchored with a proper safe zone so the
+            badge/headline never collide with the transparent sticky header
+            regardless of viewport height. pt ≫ header height (h-16/h-20). */}
+        <div className="relative h-full container pt-24 md:pt-32 lg:pt-40 pb-8">
+          <div className="max-w-2xl mx-auto text-center">
             <Reveal variant="up" delay={0}>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs text-white/85 mb-6 backdrop-blur">
                 <span className="relative flex w-2 h-2">
@@ -87,14 +112,14 @@ export default function Home() {
 
             <Reveal variant="up" delay={120}>
               <h1 className="heading-1 text-balance text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.6)]">
-                If your Benz hurts,
+                Precision care for every
                 <br />
-                <span className="text-accent">bring it to {site.name.split(" ")[0]}.</span>
+                <span className="text-accent">European vehicle.</span>
               </h1>
             </Reveal>
 
             <Reveal variant="up" delay={260}>
-              <p className="lead mt-6 max-w-xl text-white/85">
+              <p className="lead mt-6 max-w-xl mx-auto text-white/85">
                 Factory-trained Mercedes-Benz specialists delivering the
                 highest quality auto repair — without losing the personal
                 relationships our customers value most.
@@ -102,7 +127,7 @@ export default function Home() {
             </Reveal>
 
             <Reveal variant="up" delay={400}>
-              <div className="flex flex-col sm:flex-row gap-3 mt-8">
+              <div className="flex flex-col sm:flex-row gap-3 mt-8 sm:justify-center">
                 <Link href="/book" className="btn-primary group">
                   Book Now
                   <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -117,7 +142,7 @@ export default function Home() {
             </Reveal>
 
             <Reveal variant="up" delay={550}>
-              <div className="mt-10 flex items-center gap-3 text-sm text-white/85">
+              <div className="mt-10 flex items-center justify-center gap-3 text-sm text-white/85">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -137,7 +162,7 @@ export default function Home() {
 
         {/* Scroll indicator */}
         <a
-          href="#services"
+          href="#services-scrolly"
           aria-label="Scroll to next section"
           className="hidden md:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-2 text-white/70 hover:text-white transition-colors group"
         >
@@ -148,198 +173,104 @@ export default function Home() {
         </a>
       </section>
 
-      {/* Brand marquee */}
-      <div id="services" className="pt-20 md:pt-24">
+      {/* Brand marquee — sits ~1 inch above the viewport bottom */}
+      <div id="services" className="shrink-0 mb-24">
         <LogoMarquee />
       </div>
+      </div>
 
-      {/* 3-column feature strip */}
-      <section className="bg-ink-950 pb-6">
-        <div className="container relative">
-          <div className="grid md:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/5">
-            {[
-              {
-                icon: Car,
-                title: "All Benz models",
-                desc: "From A-Class through S-Class, AMG, EQ electric, Sprinter & classics.",
-              },
-              {
-                icon: Wrench,
-                title: "Variety of services",
-                desc: "Logbook servicing, brakes, transmission, diagnostics — all in one workshop.",
-              },
-              {
-                icon: Shield,
-                title: "Quality support",
-                desc: "Warranty-safe workmanship, genuine parts, technicians who care.",
-              },
-            ].map((f, i) => (
-              <Reveal key={f.title} delay={i * 120}>
-                <div className="bg-ink-900 p-8 h-full">
-                  <div className="w-10 h-10 rounded-full border border-accent/30 bg-accent/10 text-accent grid place-items-center mb-5">
-                    <f.icon className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
-                  <p className="text-sm text-white/60 leading-relaxed">
-                    {f.desc}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ SERVICES ============ */}
-      <section className="section bg-ink-950">
-        <div className="container">
-          <div className="grid lg:grid-cols-[1fr_auto] gap-8 items-end mb-12">
-            <Reveal>
-              <div>
-                <div className="eyebrow-muted mb-3">What we do</div>
-                <h2 className="heading-2 max-w-2xl">
-                  Our <span className="text-accent">auto repair</span>
-                  <br />
-                  service
-                </h2>
-              </div>
-            </Reveal>
-            <Reveal variant="right" delay={150}>
-              <div className="flex items-center gap-4 rounded-2xl bg-ink-800 border border-white/5 p-4 max-w-md">
-                <div className="hidden sm:block text-sm text-white/70">
-                  Please call us to
-                  <br />
-                  obtain our services
-                </div>
-                <a href={`tel:${site.phone}`} className="btn-primary whitespace-nowrap">
-                  <Phone className="w-4 h-4" /> Call us Now
-                </a>
-              </div>
-            </Reveal>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {services.map((s, i) => {
-              const heroSrc =
-                i % 3 === 0
-                  ? img.engineBay
-                  : i % 3 === 1
-                  ? img.diagnostic
-                  : img.brakes;
-              return (
-                <Reveal key={s.slug} delay={(i % 3) * 120}>
-                  <Link
-                    href={`/services/${s.slug}`}
-                    className="group block rounded-2xl overflow-hidden bg-ink-800 border border-white/5 hover:border-accent/40 transition-colors"
-                  >
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <Image
-                        src={heroSrc}
-                        alt={s.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover transition-transform duration-[900ms] group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-ink-900/80 to-transparent" />
-                      <div className="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/90 text-ink-900 grid place-items-center">
-                        <ServiceIcon name={s.icon} className="w-4 h-4" />
-                      </div>
-                      <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 text-ink-900 grid place-items-center transition-transform group-hover:rotate-45">
-                        <ArrowUpRight className="w-4 h-4" />
-                      </div>
-                    </div>
-                    <div className="p-5">
-                      <h3 className="text-lg font-semibold mb-1">
-                        {s.title.replace("Mercedes-Benz ", "")}
-                      </h3>
-                      <p className="text-sm text-white/60 line-clamp-2">
-                        {s.short}
-                      </p>
-                      {s.priceFrom && (
-                        <div className="mt-3 text-xs text-white/50">
-                          From{" "}
-                          <strong className="text-white">
-                            {s.priceFrom}
-                          </strong>
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      {/* ============ SERVICES (scroll-pinned) ============ */}
+      <div id="services-scrolly" className="lg:snap-start">
+        <ServicesScrolly />
+      </div>
 
       {/* ============ ABOUT ============ */}
-      <section className="section bg-ink-950">
-        <div className="container">
-          <Reveal>
-            <div className="relative rounded-[32px] bg-paper text-ink-900 p-8 md:p-14 lg:p-16 overflow-hidden">
-              {/* blue dot pattern corner */}
-              <div className="absolute -left-14 top-10 w-28 h-28 rounded-full border-8 border-accent/10" aria-hidden />
-
-              <div className="grid lg:grid-cols-2 gap-10 items-center relative">
-                <div>
+      <section className="bg-paper text-ink-900 overflow-hidden lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-12 md:py-16 lg:py-20 lg:snap-start">
+        <Reveal className="w-full">
+          <div className="container relative">
+            <div className="grid lg:grid-cols-2 items-start relative">
+              <div className="lg:pr-12">
+                {/* Heading sits at the top of the left column so its
+                    baseline aligns with the image's top edge on lg+. */}
+                <div className="mb-8 md:mb-12">
                   <div className="eyebrow mb-3">About us</div>
-                  <h2 className="heading-2 mb-6">
+                  <h2 className="heading-2">
                     Precision care for every
                     <br />
                     Mercedes that rolls in.
                   </h2>
-                  <p className="lead-dark mb-8">
-                    For nearly two decades, {site.name} has been the workshop
-                    Melbourne&apos;s Mercedes owners come to when dealer
-                    service feels too cold, and the corner garage too casual.
-                    Factory-level tools. Independent prices. Honest advice.
-                  </p>
+                </div>
+                <p className="lead-dark mb-8">
+                  For nearly two decades, {site.name} has been the workshop
+                  Melbourne&apos;s Mercedes owners come to when dealer
+                  service feels too cold, and the corner garage too casual.
+                  Factory-level tools. Independent prices. Honest advice.
+                </p>
 
-                  <div className="grid grid-cols-3 gap-4 mb-8">
-                    {[
-                      { num: 200, suffix: "+", label: "Technicians trained" },
-                      { num: site.stats.googleReviewCount, suffix: "", label: "5-star reviews" },
-                      { num: 250, suffix: "+", label: "Parts in stock" },
-                    ].map((s) => (
-                      <div key={s.label}>
-                        <div className="font-display text-3xl font-bold">
-                          <CountUp end={s.num} suffix={s.suffix} />
-                        </div>
-                        <div className="text-xs text-ink-900/55 uppercase tracking-wider mt-1">
-                          {s.label}
-                        </div>
+                <div className="grid grid-cols-3 gap-4 mb-8">
+                  {[
+                    { num: 200, suffix: "+", label: "Technicians trained" },
+                    { num: site.stats.googleReviewCount, suffix: "", label: "5-star reviews" },
+                    { num: 250, suffix: "+", label: "Parts in stock" },
+                  ].map((s) => (
+                    <div key={s.label}>
+                      <div className="font-display text-3xl font-bold">
+                        <CountUp end={s.num} suffix={s.suffix} />
                       </div>
-                    ))}
-                  </div>
-
-                  <Link href="/about" className="btn-primary">
-                    Learn more <ArrowUpRight className="w-4 h-4" />
-                  </Link>
+                      <div className="text-xs text-ink-900/55 uppercase tracking-wider mt-1">
+                        {s.label}
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <Reveal variant="right" delay={100}>
-                    <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
-                      <Image src={img.workshop2} alt="Workshop" fill sizes="50vw" className="object-cover" />
+                <Link href="/about" className="btn-primary">
+                  Learn more <ArrowUpRight className="w-4 h-4" />
+                </Link>
+
+                {/* Trust badges — closes the About block with 4 credibility
+                    anchors so there's no empty space on tall viewports. */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 pt-8 border-t border-ink-900/10">
+                  {[
+                    { icon: Wrench, title: "Xentry / STAR", desc: "Factory diagnostic tools" },
+                    { icon: ShieldCheck, title: "Genuine OEM parts", desc: "Mercedes-approved only" },
+                    { icon: BookOpen, title: "Log-book compliant", desc: "Warranty stays intact" },
+                    { icon: GraduationCap, title: "Factory-trained", desc: "Mercedes-certified techs" },
+                  ].map((b) => (
+                    <div key={b.title} className="flex flex-col gap-3">
+                      <div className="w-10 h-10 bg-accent/10 text-accent grid place-items-center border border-accent/20">
+                        <b.icon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-ink-900">{b.title}</div>
+                        <div className="text-xs text-ink-900/55 mt-0.5">{b.desc}</div>
+                      </div>
                     </div>
-                  </Reveal>
-                  <Reveal variant="right" delay={250}>
-                    <div className="relative aspect-[4/5] rounded-2xl overflow-hidden mt-10">
-                      <Image src={img.techAtWork} alt="Technician" fill sizes="50vw" className="object-cover" />
-                    </div>
-                  </Reveal>
+                  ))}
                 </div>
               </div>
+
+              <Reveal variant="right" delay={100}>
+                <div className="relative aspect-[4/5] overflow-hidden">
+                  <Image
+                    src={img.aboutShowcase}
+                    alt="Black Mercedes-Benz G63 in the Euro Heaven workshop"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                  />
+                </div>
+              </Reveal>
             </div>
-          </Reveal>
-        </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* ============ WORKING PROCESS ============ */}
       <WorkingProcess />
 
       {/* ============ WHY CHOOSE US ============ */}
-      <section className="section bg-ink-950">
+      <section className="section bg-ink-950 lg:min-h-screen lg:flex lg:flex-col lg:justify-center lg:snap-start">
         <div className="container">
           <div className="max-w-xl mb-14">
             <Reveal>
@@ -350,7 +281,7 @@ export default function Home() {
             </Reveal>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               {
                 icon: Sparkles,
@@ -367,8 +298,23 @@ export default function Home() {
                 title: "Quality Service Guaranteed",
                 desc: "Genuine or OEM parts, MB-approved fluids, warranty-safe stamping.",
               },
+              {
+                icon: Receipt,
+                title: "Transparent Pricing",
+                desc: "Itemised quotes upfront. No surprise fees at pickup — ever.",
+              },
+              {
+                icon: Car,
+                title: "Courtesy Vehicles",
+                desc: "Free loan cars on request so your day isn't derailed.",
+              },
+              {
+                icon: MessageSquare,
+                title: "Live Repair Updates",
+                desc: "SMS and email tracking throughout the repair and diagnostic.",
+              },
             ].map((f, i) => (
-              <Reveal key={f.title} delay={i * 120}>
+              <Reveal key={f.title} delay={(i % 3) * 120}>
                 <div className="card-dark h-full hover:border-accent/40 transition-colors group">
                   <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/30 text-accent grid place-items-center mb-5 group-hover:bg-accent group-hover:text-white transition-colors">
                     <f.icon className="w-5 h-5" />
@@ -379,35 +325,85 @@ export default function Home() {
               </Reveal>
             ))}
           </div>
+
+          {/* Stats strip — closes the "Why choose us" block with hard numbers */}
+          <Reveal delay={200}>
+            <div className="mt-14 md:mt-20 grid grid-cols-3 gap-6 border-t border-white/5 pt-10 text-center">
+              <div>
+                <div className="font-display text-3xl md:text-4xl font-bold text-white">
+                  <CountUp end={site.stats.yearsInBusiness} />
+                </div>
+                <div className="text-xs md:text-sm text-white/55 uppercase tracking-wider mt-1">
+                  Years in Melbourne
+                </div>
+              </div>
+              <div>
+                <div className="font-display text-3xl md:text-4xl font-bold text-white">
+                  <CountUp end={12000} suffix="+" />
+                </div>
+                <div className="text-xs md:text-sm text-white/55 uppercase tracking-wider mt-1">
+                  Cars serviced
+                </div>
+              </div>
+              <div>
+                <div className="font-display text-3xl md:text-4xl font-bold text-white">
+                  {site.stats.googleRating}
+                  <span className="text-accent">★</span>
+                </div>
+                <div className="text-xs md:text-sm text-white/55 uppercase tracking-wider mt-1">
+                  Google rating
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* ============ TESTIMONIALS (white) ============ */}
-      <section className="section bg-paper text-ink-900">
+      <section className="section bg-paper text-ink-900 lg:min-h-screen lg:flex lg:flex-col lg:justify-center lg:snap-start">
         <div className="container">
-          <div className="grid lg:grid-cols-[1fr_1.5fr] gap-10 items-start mb-12">
-            <Reveal>
-              <div>
-                <div className="eyebrow mb-3">Reviews</div>
-                <h2 className="heading-2">
-                  What clients
-                  <br />
-                  <span className="text-accent">say us?</span>
-                </h2>
+          <Reveal>
+            <div className="mb-12">
+              <div className="eyebrow mb-3">Reviews</div>
+              <h2 className="heading-2">
+                What clients
+                <br />
+                <span className="text-accent">say us?</span>
+              </h2>
+            </div>
+          </Reveal>
+
+          {/* Aggregate Google rating banner */}
+          <Reveal delay={100}>
+            <div className="mb-10 flex flex-col sm:flex-row sm:inline-flex items-center gap-4 bg-white border border-ink-900/10 px-5 py-3 shadow-light">
+              <div className="flex">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-accent text-accent" />
+                ))}
               </div>
-            </Reveal>
-            <Reveal variant="right" delay={150}>
-              <p className="lead-dark max-w-xl">
-                Real feedback from real Melbourne Benz owners. More reviews live on our
-                Google Business Profile.
-              </p>
-            </Reveal>
-          </div>
+              <div className="text-sm">
+                <strong className="text-ink-900 text-base">
+                  {site.stats.googleRating}
+                </strong>{" "}
+                <span className="text-ink-900/65">
+                  from {site.stats.googleReviewCount} verified Google reviews
+                </span>
+              </div>
+              <a
+                href={site.social.google}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-accent hover:text-accent-600 inline-flex items-center gap-1"
+              >
+                See all <ArrowUpRight className="w-4 h-4" />
+              </a>
+            </div>
+          </Reveal>
 
           <div className="grid md:grid-cols-3 gap-5">
             {testimonials.map((t, i) => (
               <Reveal key={t.name} delay={i * 120}>
-                <div className="rounded-2xl bg-white shadow-light p-6 h-full border border-ink-900/5">
+                <div className="bg-white shadow-light p-6 h-full border border-ink-900/5">
                   <div className="flex mb-3">
                     {[...Array(t.rating)].map((_, idx) => (
                       <Star
@@ -442,7 +438,7 @@ export default function Home() {
       </section>
 
       {/* ============ FAQ (dark) ============ */}
-      <section className="section bg-ink-950">
+      <section className="section bg-ink-950 lg:min-h-screen lg:flex lg:flex-col lg:justify-center lg:snap-start">
         <div className="container-narrow">
           <Reveal>
             <div className="eyebrow-muted mb-3 text-center">FAQ</div>
@@ -452,6 +448,26 @@ export default function Home() {
           </Reveal>
           <Reveal delay={100}>
             <FAQ items={faqs} />
+          </Reveal>
+
+          {/* Still-have-questions contact CTA — closes out the FAQ section */}
+          <Reveal delay={200}>
+            <div className="mt-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-ink-900 p-6 border border-white/10">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-accent/10 border border-accent/30 text-accent grid place-items-center shrink-0 mt-1">
+                  <HelpCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <strong className="text-white text-base">Still have questions?</strong>
+                  <p className="text-sm text-white/60 mt-0.5">
+                    Our team is happy to help — no obligation, no sales pitch.
+                  </p>
+                </div>
+              </div>
+              <a href={`tel:${site.phone}`} className="btn-primary shrink-0">
+                <Phone className="w-4 h-4" /> {site.phoneDisplay}
+              </a>
+            </div>
           </Reveal>
         </div>
       </section>

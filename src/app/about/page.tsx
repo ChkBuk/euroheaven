@@ -89,10 +89,10 @@ export default function AboutPage() {
       <section className="section bg-ink-950">
         <div className="container">
           <Reveal>
-            <div className="relative rounded-[32px] overflow-hidden aspect-[16/9] md:aspect-[16/7]">
+            <div className="relative overflow-hidden aspect-[16/9] md:aspect-[16/7]">
               <Image
-                src={img.workshop}
-                alt="Euro Hevans workshop"
+                src={img.aboutWorkshop}
+                alt="Mercedes-Benz in the Euro Heaven workshop"
                 fill
                 sizes="100vw"
                 className="object-cover"

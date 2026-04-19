@@ -99,7 +99,7 @@ export default function BookingWizard() {
         <p className="text-white/70 mb-6">
           Thanks! We&apos;ve emailed and SMS&apos;d your confirmation.
         </p>
-        <div className="inline-block bg-ink-900 rounded-lg px-6 py-3 mb-6">
+        <div className="inline-block bg-ink-900 px-6 py-3 mb-6">
           <div className="text-xs uppercase tracking-widest text-white/60">
             Booking reference
           </div>
@@ -194,14 +194,14 @@ function Step0({
             key={s.slug}
             onClick={() => update({ serviceSlug: s.slug })}
             className={cn(
-              "text-left p-4 rounded-lg border-2 transition-all",
+              "text-left p-4 border-2 transition-all",
               data.serviceSlug === s.slug
                 ? "border-accent bg-accent/10"
                 : "border-white/10 hover:border-white/25"
             )}
           >
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-accent/10 text-accent grid place-items-center flex-shrink-0">
+              <div className="w-10 h-10 bg-accent/10 text-accent grid place-items-center flex-shrink-0">
                 <ServiceIcon name={s.icon} className="w-5 h-5" />
               </div>
               <div>
@@ -387,7 +387,7 @@ function Step3({
                 key={iso}
                 onClick={() => update({ date: iso })}
                 className={cn(
-                  "flex-shrink-0 flex flex-col items-center px-4 py-3 rounded-lg border-2 min-w-[80px] transition-all",
+                  "flex-shrink-0 flex flex-col items-center px-4 py-3 border-2 min-w-[80px] transition-all",
                   active
                     ? "border-accent bg-accent/10"
                     : "border-white/10 hover:border-white/25"
@@ -421,7 +421,7 @@ function Step3({
                 key={t}
                 onClick={() => update({ timeSlot: t })}
                 className={cn(
-                  "py-3 rounded-lg border-2 text-sm font-medium transition-all",
+                  "py-3 border-2 text-sm font-medium transition-all",
                   active
                     ? "border-accent bg-accent text-white"
                     : "border-white/10 text-white hover:border-white/25"
@@ -449,7 +449,7 @@ function Step3({
                 key={o.value}
                 onClick={() => update({ dropOff: o.value })}
                 className={cn(
-                  "w-full text-left p-4 rounded-lg border-2 transition-all",
+                  "w-full text-left p-4 border-2 transition-all",
                   active
                     ? "border-accent bg-accent/10"
                     : "border-white/10 hover:border-white/25"
@@ -574,7 +574,7 @@ function Step5({ data }: { data: PartialBooking }) {
           <Row label="Symptoms" value={data.symptoms.join(", ")} />
         )}
       </div>
-      <div className="mt-6 p-4 bg-ink-900 rounded-lg text-sm text-white/70">
+      <div className="mt-6 p-4 bg-ink-900 text-sm text-white/70">
         By confirming, you agree to receive email and SMS updates about this
         booking. No payment required at booking — pay at the workshop.
       </div>

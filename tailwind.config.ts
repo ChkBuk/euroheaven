@@ -54,9 +54,28 @@ const config: Config = {
           warning: "#F59E0B",
         },
       },
+      // Apple's font stack: SF Pro (Display/Text) on macOS/iOS via
+      // -apple-system + BlinkMacSystemFont, system UI font on other
+      // platforms (Segoe UI on Windows, Roboto on Android), then fallbacks.
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Inter", "system-ui", "sans-serif"],
+        sans: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"SF Pro Text"',
+          '"Helvetica Neue"',
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
+        display: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"SF Pro Display"',
+          '"Helvetica Neue"',
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
       },
       letterSpacing: {
         tightest: "-0.04em",

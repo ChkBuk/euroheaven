@@ -1,14 +1,19 @@
+import { img, type ImgKey } from "./images";
+
 export type Service = {
   slug: string;
   title: string;
   short: string;
   description: string;
   icon: string;
+  image: ImgKey;
   priceFrom?: string;
   bullets: string[];
   symptoms?: string[];
   faqs: { q: string; a: string }[];
 };
+
+export const serviceImageUrl = (s: Service) => img[s.image];
 
 export const services: Service[] = [
   {
@@ -16,8 +21,9 @@ export const services: Service[] = [
     title: "Mercedes-Benz Logbook Service",
     short: "Keep your warranty intact with Mercedes factory-spec servicing.",
     description:
-      "We perform manufacturer-scheduled Service A and Service B using genuine Mercedes-Benz parts and fluids. Your logbook is stamped to maintain full warranty and resale value.",
+      "We perform manufacturer-scheduled Service A and Service B intervals using genuine Mercedes-Benz parts and MB-approved fluids meeting 229.5, 229.51 or 229.71 specs. Every service is stamped in your logbook so your new-car warranty and resale value stay fully intact. We also run a complete STAR / Xentry diagnostic scan on every visit to catch developing issues before they become expensive repairs, and hand you back the car as clean as it arrived.",
     icon: "wrench",
+    image: "oilChange",
     priceFrom: "$395",
     bullets: [
       "Service A and Service B intervals",
@@ -42,8 +48,9 @@ export const services: Service[] = [
     title: "Mercedes-Benz Brake Repair",
     short: "Pads, rotors, sensors and fluid — done right the first time.",
     description:
-      "From squealing pads to full rotor replacement on AMG models, our technicians use OEM or Mercedes-specified performance brake components matched to your model.",
+      "From squealing pads on your daily C-Class to full carbon-ceramic rotor replacement on AMG performance models, our technicians use OEM or Mercedes-specified brake components matched exactly to your vehicle. Every brake job includes a full DOT4 fluid flush, wear-sensor replacement, caliper inspection and road test — so you feel the difference from the first press of the pedal. We also identify uneven wear patterns that hint at deeper issues like caliper seizure or worn bushings.",
     icon: "gauge",
+    image: "brakes",
     priceFrom: "$480",
     bullets: [
       "Genuine / OEM pads & rotors",
@@ -71,8 +78,9 @@ export const services: Service[] = [
     title: "Mercedes-Benz Transmission Repair",
     short: "7G-Tronic & 9G-Tronic specialists — rebuilds, services, valve bodies.",
     description:
-      "From 722.9 conductor plate replacement to 9G-Tronic (725.0) fluid services, we diagnose and repair Mercedes transmission issues using the correct MB approved fluid.",
+      "Mercedes transmissions are some of the most intricate gearboxes on the road — and we know them intimately, from the 722.9 7G-Tronic to the 9G-Tronic 725.0 and the dual-clutch 724.0. Whether it's a conductor-plate replacement, valve-body rebuild, torque converter service or routine fluid change with MB 236.14 / 236.15 fluid, we diagnose the root cause rather than guess. You save thousands over dealer pricing without compromising on precision — and every job is road-tested before handover.",
     icon: "cog",
+    image: "gearShifter",
     priceFrom: "$650",
     bullets: [
       "7G-Tronic & 9G-Tronic service",
@@ -99,8 +107,9 @@ export const services: Service[] = [
     title: "Mercedes-Benz Diagnostics",
     short: "STAR / Xentry diagnostics — we find what generic scanners can't.",
     description:
-      "Using the same Mercedes factory diagnostic equipment as dealerships, we read every module, perform coding, SCN activations, and live data analysis.",
+      "Using the same Mercedes-Benz Xentry / STAR factory diagnostic equipment that dealerships run, our technicians can read every control module in your vehicle — engine, transmission, ABS, SRS, airmatic, infotainment and more. We perform SCN coding, variant coding, module programming and live data analysis, and we're trained to track down the intermittent faults that generic OBD scanners silently miss. You walk away with a written report explaining exactly what's happening and what it'll take to fix.",
     icon: "activity",
+    image: "diagnostic",
     priceFrom: "$165",
     bullets: [
       "Xentry / DAS factory diagnostics",
@@ -121,8 +130,9 @@ export const services: Service[] = [
     title: "Mercedes-Benz Air Conditioning",
     short: "R134a & R1234yf regassing, compressor & evaporator repairs.",
     description:
-      "Melbourne summers are no joke. We service both R134a (pre-2017) and R1234yf systems, repair compressors, replace evaporators, and diagnose climate control faults.",
+      "Melbourne summers are no joke, and a failing Mercedes climate control system is a miserable way to spend them. We service both R134a (pre-2017 models) and R1234yf systems, repair or replace compressors, evaporators, condensers, and chase down climate-control module faults — including the notoriously common dual-zone blend-door actuator failure on W204 and W212 models. Every major AC repair includes nitrogen leak testing and full recharge, so the cold air lasts past the next summer.",
     icon: "snowflake",
+    image: "acDashboard",
     priceFrom: "$180",
     bullets: [
       "R134a & R1234yf regas",
@@ -143,8 +153,9 @@ export const services: Service[] = [
     title: "Mercedes-Benz Pre-Purchase Inspection",
     short: "Thinking of buying a used Benz? Get an expert's opinion first.",
     description:
-      "Our 120-point PPI covers mechanical, electrical, body, interior, and service history analysis. Get a detailed written report before you commit.",
+      "Thinking of buying a used Benz? Our 120-point Pre-Purchase Inspection covers the mechanical condition, full Xentry diagnostic scan of every electronic module, body and chassis integrity check, interior condition assessment, and a deep analysis of the service history. You walk away with a detailed written report (including photos) so you can negotiate the price — or walk away from a bad buy — with total confidence. Mobile inspections available across Melbourne metro for an additional call-out fee.",
     icon: "shield-check",
+    image: "inspection",
     priceFrom: "$295",
     bullets: [
       "120-point inspection",

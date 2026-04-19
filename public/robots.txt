@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://euroheaven.com.au/sitemap.xml

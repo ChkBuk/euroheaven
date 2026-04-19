@@ -8,6 +8,7 @@ import { services } from "@/lib/services";
 import { img } from "@/lib/images";
 import ServiceIcon from "@/components/ServiceIcon";
 import Reveal from "@/components/Reveal";
+import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
 const suburbSlugs = site.suburbs.map((s) => ({
   slug: s.toLowerCase().replace(/\s+/g, "-"),
@@ -22,12 +23,15 @@ function getSuburb(slug: string) {
   return suburbSlugs.find((s) => s.slug === slug);
 }
 
-export function generateMetadata({
+type RouteParams = Promise<{ suburb: string }>;
+
+export async function generateMetadata({
   params,
 }: {
-  params: { suburb: string };
-}): Metadata {
-  const s = getSuburb(params.suburb);
+  params: RouteParams;
+}): Promise<Metadata> {
+  const { suburb } = await params;
+  const s = getSuburb(suburb);
   if (!s) return { title: "Not found" };
   return {
     title: `Mercedes-Benz Service ${s.name}`,
@@ -36,18 +40,25 @@ export function generateMetadata({
   };
 }
 
-const heroImages = [img.engineBay, img.diagnostic, img.brakes, img.wheel, img.workshop2, img.techAtWork];
-
-export default function SuburbPage({
+export default async function SuburbPage({
   params,
 }: {
-  params: { suburb: string };
+  params: RouteParams;
 }) {
-  const s = getSuburb(params.suburb);
+  const { suburb } = await params;
+  const s = getSuburb(suburb);
   if (!s) notFound();
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          {
+            name: `Mercedes-Benz Service ${s.name}`,
+            path: `/mercedes-service/${s.slug}`,
+          },
+        ]}
+      />
       <section className="relative bg-ink-950 pt-20 md:pt-28 pb-16 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-accent/10 blur-3xl rounded-full" aria-hidden />
         <div className="container relative">
@@ -94,11 +105,11 @@ export default function SuburbPage({
               <Reveal key={sv.slug} delay={(i % 3) * 120}>
                 <Link
                   href={`/services/${sv.slug}`}
-                  className="group block rounded-2xl overflow-hidden bg-ink-800 border border-white/5 hover:border-accent/40 transition-colors"
+                  className="group block overflow-hidden bg-ink-800 border border-white/5 hover:border-accent/40 transition-colors"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Image
-                      src={heroImages[i % heroImages.length]}
+                      src={img[sv.image]}
                       alt={sv.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"

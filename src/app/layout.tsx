@@ -1,24 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { site } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileCTA from "@/components/MobileCTA";
 import StructuredData from "@/components/StructuredData";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const display = Manrope({
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "swap",
-  weight: ["400", "600", "700", "800"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -69,8 +55,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-AU" className={`${inter.variable} ${display.variable}`}>
-      <body className="font-sans bg-ink-950 text-white">
+    <html lang="en-AU" data-scroll-behavior="smooth" suppressHydrationWarning>
+      <body className="font-sans bg-ink-950 text-white" suppressHydrationWarning>
         <StructuredData />
         <Header />
         <main className="min-h-[60vh]">{children}</main>

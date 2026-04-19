@@ -11,6 +11,22 @@
 html {
   scroll-behavior: smooth;
   background: var(--background);
+  /* Scroll-padding compensates for the sticky header so when a section
+     snaps to the top, its heading lands just below the nav bar, not under it. */
+  scroll-padding-top: 4rem;
+}
+@media (min-width: 768px) {
+  html {
+    scroll-padding-top: 5rem;
+  }
+}
+/* Full-section snap on large/desktop screens only. Mobile + tablet keep
+   natural scrolling since content there is shorter and snap would feel
+   heavy. */
+@media (min-width: 1024px) {
+  html {
+    scroll-snap-type: y proximity;
+  }
 }
 
 body {
@@ -27,7 +43,10 @@ body {
 
 @layer base {
   h1, h2, h3, h4 {
-    font-family: var(--font-display), "Inter", system-ui, sans-serif;
+    /* Apple system stack — SF Pro Display on macOS/iOS, platform system UI
+       font elsewhere. Tighter tracking mirrors Apple's own heading style. */
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+      "Helvetica Neue", Helvetica, Arial, sans-serif;
     letter-spacing: -0.025em;
     font-weight: 700;
   }
@@ -35,7 +54,7 @@ body {
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950 min-h-[48px];
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950 min-h-[48px];
   }
   .btn-primary {
     @apply btn bg-accent text-white hover:bg-accent-600 shadow-cta focus-visible:ring-accent;
@@ -55,13 +74,13 @@ body {
 
   /* Card surfaces */
   .card-dark {
-    @apply rounded-card bg-ink-800 border border-white/5 p-6;
+    @apply bg-ink-800 border border-white/5 p-6;
   }
   .card-light {
-    @apply rounded-card bg-white text-ink-900 shadow-light p-6;
+    @apply bg-white text-ink-900 shadow-light p-6;
   }
   .card-outline {
-    @apply rounded-card border border-white/10 bg-white/[0.02] p-6;
+    @apply border border-white/10 bg-white/[0.02] p-6;
   }
   /* Legacy .card alias — now renders on dark surfaces */
   .card {
@@ -100,10 +119,10 @@ body {
   }
 
   .field-input {
-    @apply w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 outline-none text-white placeholder:text-white/30 focus:border-accent focus:ring-2 focus:ring-accent/30 min-h-[44px];
+    @apply w-full border border-white/10 bg-white/[0.03] px-3 py-2 outline-none text-white placeholder:text-white/30 focus:border-accent focus:ring-2 focus:ring-accent/30 min-h-[44px];
   }
   .field-input-light {
-    @apply w-full rounded-lg border border-ink-900/10 bg-white px-3 py-2 outline-none text-ink-900 placeholder:text-ink-900/30 focus:border-accent focus:ring-2 focus:ring-accent/30 min-h-[44px];
+    @apply w-full border border-ink-900/10 bg-white px-3 py-2 outline-none text-ink-900 placeholder:text-ink-900/30 focus:border-accent focus:ring-2 focus:ring-accent/30 min-h-[44px];
   }
 
   /* Dashed ring used for abstract backgrounds */
@@ -159,3 +178,4 @@ body {
   0% { transform: translateX(-50%); }
   100% { transform: translateX(0); }
 }
+

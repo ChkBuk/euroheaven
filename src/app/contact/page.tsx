@@ -39,7 +39,7 @@ export default function ContactPage() {
             ].map((c, i) => (
               <Reveal key={c.title} delay={i * 100}>
                 <div className="card-dark flex gap-4">
-                  <div className="w-11 h-11 rounded-lg bg-accent/10 border border-accent/30 text-accent grid place-items-center flex-shrink-0">
+                  <div className="w-11 h-11 bg-accent/10 border border-accent/30 text-accent grid place-items-center flex-shrink-0">
                     <c.icon className="w-5 h-5" />
                   </div>
                   <div>
@@ -60,7 +60,7 @@ export default function ContactPage() {
 
             <Reveal delay={300}>
               <div className="card-dark flex gap-4">
-                <div className="w-11 h-11 rounded-lg bg-accent/10 border border-accent/30 text-accent grid place-items-center flex-shrink-0">
+                <div className="w-11 h-11 bg-accent/10 border border-accent/30 text-accent grid place-items-center flex-shrink-0">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>

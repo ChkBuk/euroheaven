@@ -1,4 +1,4 @@
-# Euro Hevans — Mercedes-Benz Specialist Website
+# Euro Heaven — Mercedes-Benz Specialist Website
 
 A mobile-first, SEO-optimised website for a Mercedes-Benz specialist repair workshop in Melbourne, Victoria. Built with Next.js 14 (App Router), TypeScript, Tailwind CSS, and designed to integrate with Supabase, Google Calendar, Resend (email), and Twilio (SMS).
 

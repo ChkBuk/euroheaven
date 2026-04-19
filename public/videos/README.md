@@ -13,7 +13,7 @@ Drop your hero video file here as **`hero.mp4`** (and optionally `hero.webm` for
 | Bitrate | 2–4 Mbps |
 | File size | < 5 MB ideally |
 | Audio | None (the player is muted by default) |
-| Content | Mechanic working under a Mercedes-Benz, e.g. an oil change |
+| Content | Workshop activities — mechanics working on / under Mercedes-Benz vehicles (diagnostics, repair, servicing) |
 
 ## Where to source one
 

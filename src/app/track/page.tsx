@@ -9,11 +9,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/track" },
 };
 
-export default function TrackPage({
+export default async function TrackPage({
   searchParams,
 }: {
-  searchParams: { ref?: string };
+  searchParams: Promise<{ ref?: string }>;
 }) {
+  const { ref } = await searchParams;
   return (
     <>
       <section className="relative bg-ink-950 pt-16 pb-10 overflow-hidden">
@@ -33,7 +34,7 @@ export default function TrackPage({
       </section>
       <section className="section bg-ink-950">
         <div className="container max-w-2xl">
-          <TrackForm initialRef={searchParams.ref} />
+          <TrackForm initialRef={ref} />
         </div>
       </section>
     </>

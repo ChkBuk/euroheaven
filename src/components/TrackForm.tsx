@@ -185,7 +185,7 @@ function StatusTimeline({ booking }: { booking: Booking }) {
             <li
               key={s}
               className={cn(
-                "flex items-center gap-4 p-3 rounded-lg transition-colors",
+                "flex items-center gap-4 p-3 transition-colors",
                 active && "bg-accent/5 border-l-4 border-accent",
                 done && "opacity-70"
               )}

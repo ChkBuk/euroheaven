@@ -1,4 +1,4 @@
--- Euro Hevans / Mercedes-Benz repair site — Supabase schema
+-- Euro Heaven / Mercedes-Benz repair site — Supabase schema
 -- Run this in the Supabase SQL editor or via CLI.
 
 create extension if not exists "pgcrypto";

@@ -1,17 +1,17 @@
 export const site = {
-  name: "Euro Heavens",
+  name: "Euro Heaven",
   tagline: "Melbourne's Trusted Mercedes-Benz Specialists",
   description:
     "Factory-trained Mercedes-Benz specialists in Melbourne. Logbook servicing, diagnostics, brake & transmission repair for all Benz models across Victoria.",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://eurohevans.com.au",
-  phone: "+61 3 9000 0000",
-  phoneDisplay: "(03) 9000 0000",
-  email: "service@eurohevans.com.au",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://euroheaven.com.au",
+  phone: "+61 400 115 765",
+  phoneDisplay: "400 115 765",
+  email: "info@euroheaven.com.au",
   address: {
-    street: "123 Example Road",
-    suburb: "Richmond",
-    state: "VIC",
-    postcode: "3121",
+    street: "123, ABC Avenue",
+    suburb: "Dandedong",
+    state: "Victoria",
+    postcode: "",
     country: "Australia",
   },
   hours: [
@@ -19,11 +19,11 @@ export const site = {
     { day: "Saturday", time: "8:00am – 1:00pm" },
     { day: "Sunday", time: "Closed" },
   ],
-  abn: "00 000 000 000",
+  abn: "123 456 789 123",
   social: {
-    facebook: "https://facebook.com/eurohevans",
-    instagram: "https://instagram.com/eurohevans",
-    google: "https://g.page/eurohevans",
+    facebook: "https://facebook.com/euroheaven",
+    instagram: "https://instagram.com/euroheaven",
+    google: "https://g.page/euroheaven",
   },
   stats: {
     yearsInBusiness: 18,

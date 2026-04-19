@@ -1,7 +1,7 @@
 import { site } from "@/lib/site";
 
 export default function StructuredData() {
-  const data = {
+  const business = {
     "@context": "https://schema.org",
     "@type": "AutoRepair",
     "@id": `${site.url}#business`,
@@ -58,10 +58,47 @@ export default function StructuredData() {
     },
   };
 
+  const organization = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${site.url}#organization`,
+    name: site.name,
+    url: site.url,
+    logo: `${site.url}/logo.svg`,
+    sameAs: [site.social.facebook, site.social.instagram, site.social.google],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: site.phone,
+      email: site.email,
+      contactType: "customer service",
+      areaServed: "AU",
+      availableLanguage: ["English"],
+    },
+  };
+
+  const website = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${site.url}#website`,
+    url: site.url,
+    name: site.name,
+    publisher: { "@id": `${site.url}#organization` },
+  };
+
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(business) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
+      />
+    </>
   );
 }

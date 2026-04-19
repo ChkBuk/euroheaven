@@ -53,7 +53,7 @@ export default function ReviewsPage() {
         <div className="container grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {reviews.map((r, i) => (
             <Reveal key={r.id} delay={(i % 3) * 120}>
-              <div className="rounded-2xl bg-white shadow-light p-6 h-full border border-ink-900/5">
+              <div className="bg-white shadow-light p-6 h-full border border-ink-900/5">
                 <div className="flex mb-3">
                   {[...Array(5)].map((_, idx) => (
                     <Star

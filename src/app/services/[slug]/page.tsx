@@ -8,18 +8,22 @@ import { img } from "@/lib/images";
 import ServiceIcon from "@/components/ServiceIcon";
 import FAQ from "@/components/FAQ";
 import Reveal from "@/components/Reveal";
+import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 import { site } from "@/lib/site";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
 }
 
-export function generateMetadata({
+type RouteParams = Promise<{ slug: string }>;
+
+export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
-}): Metadata {
-  const service = getService(params.slug);
+  params: RouteParams;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const service = getService(slug);
   if (!service) return { title: "Service not found" };
   return {
     title: `${service.title} Melbourne`,
@@ -28,17 +32,15 @@ export function generateMetadata({
   };
 }
 
-const heroImages = [img.engineBay, img.diagnostic, img.brakes, img.wheel, img.workshop2, img.techAtWork];
-
-export default function ServiceDetail({
+export default async function ServiceDetail({
   params,
 }: {
-  params: { slug: string };
+  params: RouteParams;
 }) {
-  const service = getService(params.slug);
+  const { slug } = await params;
+  const service = getService(slug);
   if (!service) notFound();
-  const serviceIdx = services.findIndex((s) => s.slug === service.slug);
-  const heroSrc = heroImages[serviceIdx % heroImages.length];
+  const heroSrc = img[service.image];
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -68,6 +70,12 @@ export default function ServiceDetail({
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Services", path: "/services" },
+          { name: service.title, path: `/services/${service.slug}` },
+        ]}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
@@ -91,7 +99,7 @@ export default function ServiceDetail({
             <Reveal>
               <div>
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="w-12 h-12 rounded-xl bg-accent/10 border border-accent/30 text-accent grid place-items-center">
+                  <div className="w-12 h-12 bg-accent/10 border border-accent/30 text-accent grid place-items-center">
                     <ServiceIcon name={service.icon} className="w-6 h-6" />
                   </div>
                   <div className="eyebrow">{service.title.replace("Mercedes-Benz ", "")}</div>
@@ -119,7 +127,7 @@ export default function ServiceDetail({
             </Reveal>
 
             <Reveal variant="scale" delay={150}>
-              <div className="relative aspect-[5/4] rounded-2xl overflow-hidden">
+              <div className="relative aspect-[5/4] overflow-hidden">
                 <Image
                   src={heroSrc}
                   alt={service.title}
@@ -145,7 +153,7 @@ export default function ServiceDetail({
                   {service.bullets.map((b) => (
                     <li
                       key={b}
-                      className="flex gap-3 p-4 rounded-xl bg-ink-800 border border-white/5"
+                      className="flex gap-3 p-4 bg-ink-800 border border-white/5"
                     >
                       <Check className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
                       <span className="text-white/80">{b}</span>
@@ -163,7 +171,7 @@ export default function ServiceDetail({
                     {service.symptoms.map((s) => (
                       <li
                         key={s}
-                        className="flex gap-3 p-3 rounded-lg border border-white/5"
+                        className="flex gap-3 p-3 border border-white/5"
                       >
                         <AlertTriangle className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
                         <span className="text-white/80">{s}</span>
@@ -215,7 +223,7 @@ export default function ServiceDetail({
                   href={`/services/${s.slug}`}
                   className="card-dark hover:border-accent/40 transition-colors group"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-accent/10 text-accent grid place-items-center mb-3">
+                  <div className="w-10 h-10 bg-accent/10 text-accent grid place-items-center mb-3">
                     <ServiceIcon name={s.icon} className="w-5 h-5" />
                   </div>
                   <h3 className="text-lg font-semibold mb-1">

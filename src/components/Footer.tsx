@@ -3,6 +3,32 @@ import { MapPin, Phone, Mail, Clock, ArrowUpRight } from "lucide-react";
 import { site } from "@/lib/site";
 import { services } from "@/lib/services";
 
+function FacebookIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className}>
+      <path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5h1.65V3.6c-.3-.04-1.3-.13-2.45-.13-2.43 0-4.1 1.48-4.1 4.2v2.23H7.5V13h2.65v8h3.35z" />
+    </svg>
+  );
+}
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className={className}>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function GoogleGIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className}>
+      <path d="M21.35 11.1h-9.17v2.96h5.27c-.5 2.42-2.48 3.96-5.27 3.96-3.15 0-5.73-2.58-5.73-5.73s2.58-5.73 5.73-5.73c1.42 0 2.72.5 3.74 1.33l2.12-2.12C16.46 4.18 14.36 3.27 12.18 3.27 7.37 3.27 3.5 7.14 3.5 11.95s3.87 8.68 8.68 8.68c5.01 0 8.32-3.52 8.32-8.47 0-.57-.05-.99-.15-1.06z" />
+    </svg>
+  );
+}
+
 export default function Footer() {
   return (
     <footer className="bg-ink-900 text-white border-t border-white/5">
@@ -22,21 +48,30 @@ export default function Footer() {
           <div className="flex gap-2">
             <a
               href={site.social.facebook}
-              className="px-3 py-1.5 text-xs rounded-full border border-white/10 hover:border-accent hover:text-accent transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${site.name} on Facebook`}
+              className="w-9 h-9 grid place-items-center rounded-full border border-white/10 text-white/70 hover:border-accent hover:text-accent transition-colors"
             >
-              Facebook
+              <FacebookIcon className="w-4 h-4" />
             </a>
             <a
               href={site.social.instagram}
-              className="px-3 py-1.5 text-xs rounded-full border border-white/10 hover:border-accent hover:text-accent transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${site.name} on Instagram`}
+              className="w-9 h-9 grid place-items-center rounded-full border border-white/10 text-white/70 hover:border-accent hover:text-accent transition-colors"
             >
-              Instagram
+              <InstagramIcon className="w-4 h-4" />
             </a>
             <a
               href={site.social.google}
-              className="px-3 py-1.5 text-xs rounded-full border border-white/10 hover:border-accent hover:text-accent transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${site.name} on Google`}
+              className="w-9 h-9 grid place-items-center rounded-full border border-white/10 text-white/70 hover:border-accent hover:text-accent transition-colors"
             >
-              Google
+              <GoogleGIcon className="w-4 h-4" />
             </a>
           </div>
         </div>

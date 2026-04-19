@@ -37,7 +37,11 @@ export default function Header() {
       )}
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
-        <Link href="/" className="flex" aria-label={`${site.name} — home`}>
+        <Link
+          href="/"
+          className="flex -ml-4 md:-ml-8 lg:ml-0"
+          aria-label={`${site.name} — home`}
+        >
           <img
             src="/logo.svg"
             alt={site.name}

@@ -5,7 +5,8 @@
       "Bash(curl -s -o /dev/null -w \"services: %{http_code}\\\\n\" http://localhost:3421/services)",
       "Bash(curl -s -o /dev/null -w \"book: %{http_code}\\\\n\" http://localhost:3421/book)",
       "Bash(curl -s -o /dev/null -w \"track: %{http_code}\\\\n\" http://localhost:3421/track)",
-      "Bash(curl -s -o /dev/null -w \"admin: %{http_code}\\\\n\" http://localhost:3421/admin)"
+      "Bash(curl -s -o /dev/null -w \"admin: %{http_code}\\\\n\" http://localhost:3421/admin)",
+      "Bash(xargs -I {} basename {})"
     ]
   }
 }
