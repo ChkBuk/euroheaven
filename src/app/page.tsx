@@ -91,17 +91,24 @@ export default function Home() {
           the transparent header at the top; LogoMarquee sits at the bottom
           of the viewport. overflow-hidden guards against content bleed on
           ultra-short viewports. */}
-      <div className="-mt-16 md:-mt-20 relative min-h-screen min-h-dvh flex flex-col bg-ink-950 overflow-hidden lg:snap-start">
+      <div className="-mt-16 md:-mt-20 relative min-h-screen min-h-dvh flex flex-col bg-ink-950 overflow-hidden">
       <section className="group relative isolate flex-1 min-h-0 overflow-hidden">
         <HeroVideo />
 
         {/* Content overlay — top-anchored with a proper safe zone so the
             badge/headline never collide with the transparent sticky header
             regardless of viewport height. pt ≫ header height (h-16/h-20). */}
-        <div className="relative h-full container pt-24 md:pt-32 lg:pt-40 pb-8">
+        <div className="relative h-full container pt-36 md:pt-44 lg:pt-52 pb-8">
           <div className="max-w-2xl mx-auto text-center">
+            {/* Soft dark veil directly behind the text stack — keeps
+                copy readable over bright video frames without fully
+                obscuring the footage. */}
+            <div
+              className="pointer-events-none absolute inset-x-0 top-24 md:top-28 lg:top-32 mx-auto max-w-3xl h-[70%] bg-ink-950/35 blur-3xl -z-10"
+              aria-hidden
+            />
             <Reveal variant="up" delay={0}>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs text-white/85 mb-6 backdrop-blur">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink-950/55 border border-white/20 text-xs text-white mb-6 backdrop-blur-md shadow-lg">
                 <span className="relative flex w-2 h-2">
                   <span className="absolute inline-flex h-full w-full rounded-full bg-accent animate-pulse-ring" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
@@ -111,15 +118,17 @@ export default function Home() {
             </Reveal>
 
             <Reveal variant="up" delay={120}>
-              <h1 className="heading-1 text-balance text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.6)]">
+              <h1 className="heading-1 text-balance text-white [text-shadow:0_2px_14px_rgba(0,0,0,0.7),0_0_32px_rgba(0,0,0,0.4)]">
                 Precision care for every
                 <br />
-                <span className="text-accent">European vehicle.</span>
+                <span className="text-accent [text-shadow:0_2px_14px_rgba(0,0,0,0.9),0_0_24px_rgba(0,0,0,0.6)]">
+                  European vehicle.
+                </span>
               </h1>
             </Reveal>
 
             <Reveal variant="up" delay={260}>
-              <p className="lead mt-6 max-w-xl mx-auto text-white/85">
+              <p className="lead mt-6 max-w-xl mx-auto text-white [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
                 Factory-trained Mercedes-Benz specialists delivering the
                 highest quality auto repair — without losing the personal
                 relationships our customers value most.
@@ -180,12 +189,12 @@ export default function Home() {
       </div>
 
       {/* ============ SERVICES (scroll-pinned) ============ */}
-      <div id="services-scrolly" className="lg:snap-start">
+      <div id="services-scrolly">
         <ServicesScrolly />
       </div>
 
       {/* ============ ABOUT ============ */}
-      <section className="bg-paper text-ink-900 overflow-hidden lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-12 md:py-16 lg:py-20 lg:snap-start">
+      <section className="bg-paper text-ink-900 overflow-hidden py-12 md:py-16 lg:py-20">
         <Reveal className="w-full">
           <div className="container relative">
             <div className="grid lg:grid-cols-2 items-start relative">
@@ -266,12 +275,12 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ============ WORKING PROCESS ============ */}
-      <WorkingProcess />
+      {/* ============ HOW IT WORKS + WHY US (one page unit) ============ */}
+      <div>
+        <WorkingProcess />
 
-      {/* ============ WHY CHOOSE US ============ */}
-      <section className="section bg-ink-950 lg:min-h-screen lg:flex lg:flex-col lg:justify-center lg:snap-start">
-        <div className="container">
+        <section className="section bg-ink-950">
+          <div className="container">
           <div className="max-w-xl mb-14">
             <Reveal>
               <div className="eyebrow-muted mb-3">Why us</div>
@@ -358,15 +367,17 @@ export default function Home() {
           </Reveal>
         </div>
       </section>
+      </div>
 
-      {/* ============ TESTIMONIALS (white) ============ */}
-      <section className="section bg-paper text-ink-900 lg:min-h-screen lg:flex lg:flex-col lg:justify-center lg:snap-start">
-        <div className="container">
-          <Reveal>
-            <div className="mb-12">
-              <div className="eyebrow mb-3">Reviews</div>
-              <h2 className="heading-2">
-                What clients
+      {/* ============ TESTIMONIALS + FAQ (one page unit) ============ */}
+      <div>
+        <section className="section bg-paper text-ink-900">
+          <div className="container">
+            <Reveal>
+              <div className="mb-12">
+                <div className="eyebrow mb-3">Reviews</div>
+                <h2 className="heading-2">
+                  What clients
                 <br />
                 <span className="text-accent">say us?</span>
               </h2>
@@ -437,9 +448,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ============ FAQ (dark) ============ */}
-      <section className="section bg-ink-950 lg:min-h-screen lg:flex lg:flex-col lg:justify-center lg:snap-start">
-        <div className="container-narrow">
+        {/* ============ FAQ (dark) ============ */}
+        <section className="section bg-ink-950">
+          <div className="container-narrow">
           <Reveal>
             <div className="eyebrow-muted mb-3 text-center">FAQ</div>
             <h2 className="heading-2 text-center mb-10">
@@ -471,6 +482,7 @@ export default function Home() {
           </Reveal>
         </div>
       </section>
+      </div>
 
       {/* ============ NEWSLETTER CTA ============ */}
       <Newsletter />

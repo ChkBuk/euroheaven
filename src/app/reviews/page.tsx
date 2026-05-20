@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function ReviewsPage() {
-  const reviews = db.listReviews();
+export default async function ReviewsPage() {
+  const reviews = await db.listReviews();
   const avg =
     reviews.reduce((a, r) => a + r.stars, 0) / (reviews.length || 1);
 

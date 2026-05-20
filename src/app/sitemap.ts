@@ -24,6 +24,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : 0.8,
   }));
 
+  const legalUrls: MetadataRoute.Sitemap = ["/privacy", "/terms"].map(
+    (path) => ({
+      url: `${base}${path}`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    })
+  );
+
   const serviceUrls: MetadataRoute.Sitemap = services.map((s) => ({
     url: `${base}/services/${s.slug}`,
     lastModified: now,
@@ -45,5 +54,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  return [...statics, ...serviceUrls, ...suburbUrls, ...postUrls];
+  return [...statics, ...legalUrls, ...serviceUrls, ...suburbUrls, ...postUrls];
 }

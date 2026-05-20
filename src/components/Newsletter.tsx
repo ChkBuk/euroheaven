@@ -32,7 +32,7 @@ export default function Newsletter() {
   }
 
   return (
-    <section className="py-12 md:py-20 bg-ink-950 lg:min-h-screen lg:flex lg:flex-col lg:justify-center lg:snap-start">
+    <section className="py-12 md:py-20 bg-ink-950">
       <div className="container">
         {/* Section heading — lives outside the accent card, matching the
             "What we do / How it works / About us" pattern. */}

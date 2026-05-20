@@ -34,7 +34,7 @@ export default function WorkingProcess() {
   const [active, setActive] = useState(0);
 
   return (
-    <section className="bg-ink-800 border-b border-white/5 overflow-hidden lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-12 md:py-20 lg:snap-start">
+    <section className="bg-ink-800 border-b border-white/5 overflow-hidden py-12 md:py-20">
       <Reveal className="w-full">
         <div className="container relative">
           {/* Section heading — lives outside the image, mirroring the

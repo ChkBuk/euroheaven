@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
-  const result = db.addRating(
+  const result = await db.addRating(
     parsed.data.reference,
     parsed.data.stars,
     parsed.data.comment
@@ -27,5 +27,5 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  return NextResponse.json({ reviews: db.listReviews() });
+  return NextResponse.json({ reviews: await db.listReviews() });
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { Loader2, RefreshCw, ArrowUpRight } from "lucide-react";
 import { statusLabels, statusOrder, type Booking, type RepairStatus } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
@@ -92,16 +93,24 @@ export default function AdminDashboard() {
                   at {b.timeSlot}
                 </div>
               </div>
-              <span
-                className={cn(
-                  "px-3 py-1 rounded-full text-xs font-semibold",
-                  b.status === "completed"
-                    ? "bg-brand-success/15 text-brand-success"
-                    : "bg-accent/15 text-accent"
-                )}
-              >
-                {statusLabels[b.status]}
-              </span>
+              <div className="flex flex-col items-end gap-2">
+                <span
+                  className={cn(
+                    "px-3 py-1 rounded-full text-xs font-semibold",
+                    b.status === "completed"
+                      ? "bg-brand-success/15 text-brand-success"
+                      : "bg-accent/15 text-accent"
+                  )}
+                >
+                  {statusLabels[b.status]}
+                </span>
+                <Link
+                  href={`/admin/bookings/${b.reference}`}
+                  className="inline-flex items-center gap-1 text-xs text-white/65 hover:text-accent"
+                >
+                  Manage <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </div>
             </div>
 
             <div className="text-sm text-white/70 mb-3">

@@ -75,22 +75,35 @@ export default function HeroVideo({
         )}
         aria-label="Mercedes-Benz workshop activities"
       >
-        <source src="/videos/hero.mp4" type="video/mp4" />
+        <source
+          src={
+            process.env.NEXT_PUBLIC_HERO_VIDEO_URL || "/videos/hero.mp4"
+          }
+          type="video/mp4"
+        />
       </video>
 
       {/* Gradient overlays for legibility */}
       {/* Top strip — keeps the transparent sticky header readable on
           light-heavy video frames (sparks, reflections, sky). */}
       <div
-        className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink-950/55 to-transparent"
+        className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink-950/70 to-transparent"
+        aria-hidden
+      />
+      {/* Flat dark veil over the whole video — dims the footage uniformly
+          so text contrast is predictable regardless of what's on screen. */}
+      <div
+        className="absolute inset-0 bg-ink-950/55"
+        aria-hidden
+      />
+      {/* Left-weighted gradient kept for depth; combined with the veil
+          above this reads as a cinematic dark wash rather than a flat box. */}
+      <div
+        className="absolute inset-0 bg-gradient-to-r from-ink-950/70 via-ink-950/30 to-ink-950/10"
         aria-hidden
       />
       <div
-        className="absolute inset-0 bg-gradient-to-r from-ink-950/85 via-ink-950/55 to-ink-950/30"
-        aria-hidden
-      />
-      <div
-        className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink-950 via-ink-950/40 to-transparent"
+        className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink-950 via-ink-950/50 to-transparent"
         aria-hidden
       />
     </div>

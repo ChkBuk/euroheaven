@@ -182,7 +182,7 @@ export default function ServicesScrolly() {
           <div className="grid md:grid-cols-2 gap-10 md:gap-14 mt-12">
             {services.map((s) => (
               <article key={s.slug} className="relative h-[520px]">
-                <CardBody service={s} />
+                <CardBody service={s} isActive={false} activeKey={0} />
               </article>
             ))}
           </div>
@@ -203,10 +203,30 @@ export default function ServicesScrolly() {
       >
         {/* Section header */}
         <header className="relative z-30 bg-ink-950 lg:shrink-0">
-          <div className="container py-8 md:py-10">
+          <div className="container pt-6 pb-2 md:py-10">
             <SectionHeader />
           </div>
         </header>
+
+        {/* Mobile-only arrow row — sits above the carousel between the
+            section title and the card, so the controls never overlap
+            the card artwork or text. */}
+        <div className="md:hidden flex items-center justify-between container pb-2">
+          <button
+            onClick={prev}
+            aria-label="Previous service"
+            className="w-11 h-11 grid place-items-center bg-ink-900/70 backdrop-blur border border-white/15 text-white hover:bg-ink-900 transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={next}
+            aria-label="Next service"
+            className="w-11 h-11 grid place-items-center bg-ink-900/70 backdrop-blur border border-white/15 text-white hover:bg-ink-900 transition-colors"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
 
         {/* Horizontal carousel track — takes the remaining vertical space on
             lg+ so the section fills the entire viewport; fixed card height
@@ -226,25 +246,30 @@ export default function ServicesScrolly() {
                 aria-hidden={i !== active}
                 className="flex-none w-full h-full"
               >
-                <div className="relative h-[640px] md:h-[720px] lg:h-full">
-                  <CardBody service={s} />
+                <div className="relative h-[540px] md:h-[720px] lg:h-full">
+                  <CardBody
+                    service={s}
+                    isActive={i === active}
+                    activeKey={active}
+                  />
                 </div>
               </article>
             ))}
           </div>
 
-          {/* Prev / next arrows */}
+          {/* Prev / next arrows — md+ only. On mobile, the row above the
+              carousel handles navigation so controls don't overlap cards. */}
           <button
             onClick={prev}
             aria-label="Previous service"
-            className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 grid place-items-center bg-ink-900/70 backdrop-blur border border-white/15 text-white hover:bg-ink-900 transition-colors"
+            className="hidden md:grid absolute left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 place-items-center bg-ink-900/70 backdrop-blur border border-white/15 text-white hover:bg-ink-900 transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={next}
             aria-label="Next service"
-            className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 grid place-items-center bg-ink-900/70 backdrop-blur border border-white/15 text-white hover:bg-ink-900 transition-colors"
+            className="hidden md:grid absolute right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 place-items-center bg-ink-900/70 backdrop-blur border border-white/15 text-white hover:bg-ink-900 transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -255,7 +280,7 @@ export default function ServicesScrolly() {
           aria-label="Service progress"
           // `lg:shrink-0` keeps the dots visible at the bottom of the
           // viewport-sized section instead of being pushed off-screen.
-          className="relative z-30 flex justify-center gap-2 py-6 lg:shrink-0"
+          className="relative z-30 flex justify-center gap-2 py-2 md:py-6 lg:shrink-0"
         >
           {services.map((s, i) => (
             <button
@@ -296,11 +321,15 @@ function SectionHeader({ compact = false }: { compact?: boolean }) {
 
 function CardBody({
   service: s,
+  isActive,
+  activeKey,
 }: {
   service: (typeof services)[number];
+  isActive: boolean;
+  activeKey: number;
 }) {
   return (
-    <div className="relative w-full h-full min-h-[520px] overflow-hidden">
+    <div className="relative w-full h-full min-h-[440px] overflow-hidden">
       <Image
         src={img[s.image]}
         alt={s.title}
@@ -310,28 +339,37 @@ function CardBody({
         priority={false}
       />
 
+      {/* Base dark wash so the image reads as a secondary layer rather
+          than competing with the text panel. */}
       <div
-        className="absolute inset-0 bg-gradient-to-r from-ink-950/90 via-ink-950/60 to-ink-950/10"
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent"
+        className="absolute inset-0 bg-gradient-to-r from-ink-950/85 via-ink-950/50 to-ink-950/20"
         aria-hidden
       />
 
-      <div className="relative container h-full flex flex-col justify-center py-8 md:py-12">
-        <div className="max-w-xl">
+      <div className="relative mx-auto max-w-6xl h-full w-full flex flex-col justify-center py-8 md:py-12 px-[5px] md:px-6">
+        {/* Frosted-glass panel. The `key` ensures React remounts this
+            element each time the carousel lands on this card, which
+            replays the CSS animations (content fade-up + border flash). */}
+        <div
+          key={isActive ? `panel-${activeKey}` : `panel-idle-${s.slug}`}
+          className={cn(
+            "relative max-w-xl bg-ink-950/75 backdrop-blur-md border border-white/10 border-l-4 border-l-accent p-6 md:p-8 lg:p-10 shadow-2xl",
+            isActive && "card-animate"
+          )}
+        >
+          {isActive && <span className="card-flash" aria-hidden />}
+
           <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-tight mb-4">
             {s.title.replace("Mercedes-Benz ", "")}
           </h3>
 
-          <p className="text-sm md:text-base text-white/85 leading-relaxed mb-5">
+          <p className="text-sm md:text-base text-white/90 leading-relaxed mb-5">
             {s.description}
           </p>
 
           <ul className="space-y-2 mb-6">
             {s.bullets.slice(0, 4).map((b) => (
-              <li key={b} className="flex gap-2 text-sm text-white/90">
+              <li key={b} className="flex gap-2 text-sm text-white">
                 <Check className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
                 <span>{b}</span>
               </li>
@@ -343,7 +381,7 @@ function CardBody({
               Find out more <ArrowUpRight className="w-4 h-4" />
             </Link>
             {s.priceFrom && (
-              <div className="text-sm text-white/75">
+              <div className="text-sm text-white/80">
                 From <strong className="text-white">{s.priceFrom}</strong>
               </div>
             )}

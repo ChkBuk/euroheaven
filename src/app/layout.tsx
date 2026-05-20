@@ -4,6 +4,8 @@ import { site } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileCTA from "@/components/MobileCTA";
+import FloatingChat from "@/components/FloatingChat";
+import CookieConsent from "@/components/CookieConsent";
 import StructuredData from "@/components/StructuredData";
 
 export const metadata: Metadata = {
@@ -62,6 +64,8 @@ export default function RootLayout({
         <main className="min-h-[60vh]">{children}</main>
         <Footer />
         <MobileCTA />
+        <FloatingChat />
+        <CookieConsent />
       </body>
     </html>
   );

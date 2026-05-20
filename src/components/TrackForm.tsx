@@ -3,13 +3,21 @@
 import { useEffect, useState } from "react";
 import { Check, Circle, Clock, Loader2, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { statusLabels, statusOrder, type Booking } from "@/lib/store";
+import {
+  statusLabels,
+  statusOrder,
+  type Booking,
+  type BookingNote,
+  type StatusLogEntry,
+} from "@/lib/store";
 import RatingForm from "@/components/RatingForm";
 
 export default function TrackForm({ initialRef }: { initialRef?: string }) {
   const [ref, setRef] = useState(initialRef || "");
   const [rego, setRego] = useState("");
   const [booking, setBooking] = useState<Booking | null>(null);
+  const [statusLog, setStatusLog] = useState<StatusLogEntry[]>([]);
+  const [notes, setNotes] = useState<BookingNote[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [magicSent, setMagicSent] = useState(false);
@@ -19,16 +27,24 @@ export default function TrackForm({ initialRef }: { initialRef?: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialRef]);
 
-  // Poll every 5 seconds while a booking is displayed (simulates realtime)
+  // Refetch the timeline every 5 seconds while a booking is displayed
+  // (simulates realtime — replace with Supabase Realtime subscription when
+  // we wire that up in a later phase).
   useEffect(() => {
     if (!booking) return;
-    const id = setInterval(async () => {
-      const res = await fetch(`/api/bookings/${booking.reference}`);
+    const fetchTimeline = async () => {
+      const res = await fetch(
+        `/api/bookings/${booking.reference}/timeline`,
+        { cache: "no-store" }
+      );
       if (res.ok) {
         const data = await res.json();
         if (data.booking) setBooking(data.booking);
+        if (data.statusLog) setStatusLog(data.statusLog);
+        if (data.notes) setNotes(data.notes);
       }
-    }, 5000);
+    };
+    const id = setInterval(fetchTimeline, 5000);
     return () => clearInterval(id);
   }, [booking?.reference]);
 
@@ -37,15 +53,33 @@ export default function TrackForm({ initialRef }: { initialRef?: string }) {
     if (!r) return;
     setLoading(true);
     setError(null);
+    // Try the timeline endpoint first — it returns booking + status log
+    // + public notes in one round-trip.
+    const tlRes = await fetch(`/api/bookings/${r}/timeline`, {
+      cache: "no-store",
+    });
+    if (tlRes.ok) {
+      const data = await tlRes.json();
+      setBooking(data.booking);
+      setStatusLog(data.statusLog ?? []);
+      setNotes(data.notes ?? []);
+      setLoading(false);
+      return;
+    }
+    // Fallback for older deployments / 403 (not signed in): fetch booking only.
     const res = await fetch(`/api/bookings/${r}`);
     setLoading(false);
     if (!res.ok) {
       setError("We couldn't find that booking. Check your reference.");
       setBooking(null);
+      setStatusLog([]);
+      setNotes([]);
       return;
     }
     const data = await res.json();
     setBooking(data.booking);
+    setStatusLog([]);
+    setNotes([]);
   }
 
   async function sendMagicLink(e: React.FormEvent<HTMLFormElement>) {
@@ -97,7 +131,9 @@ export default function TrackForm({ initialRef }: { initialRef?: string }) {
         {error && <p className="text-accent text-sm mt-3">{error}</p>}
       </div>
 
-      {booking && <StatusTimeline booking={booking} />}
+      {booking && (
+        <StatusTimeline booking={booking} statusLog={statusLog} notes={notes} />
+      )}
 
       {booking?.status === "completed" && !booking.rating && (
         <div className="card">
@@ -144,7 +180,15 @@ export default function TrackForm({ initialRef }: { initialRef?: string }) {
   );
 }
 
-function StatusTimeline({ booking }: { booking: Booking }) {
+function StatusTimeline({
+  booking,
+  statusLog,
+  notes,
+}: {
+  booking: Booking;
+  statusLog: StatusLogEntry[];
+  notes: BookingNote[];
+}) {
   const currentIdx = statusOrder.indexOf(booking.status);
   return (
     <div className="card">
@@ -221,21 +265,43 @@ function StatusTimeline({ booking }: { booking: Booking }) {
         })}
       </ol>
 
-      {booking.technicianNotes && booking.technicianNotes.length > 0 && (
+      {(notes.length > 0 || statusLog.length > 0) && (
         <div className="mt-6 pt-6 border-t border-white/10">
-          <h3 className="font-semibold text-white mb-3">
-            Technician notes
-          </h3>
-          <ul className="space-y-2 text-sm">
-            {booking.technicianNotes.map((n, i) => (
-              <li key={i} className="text-white/80">
-                <span className="text-white/50 mr-2">
-                  {new Date(n.ts).toLocaleString("en-AU")}
-                </span>
-                {n.text}
-              </li>
-            ))}
-          </ul>
+          <h3 className="font-semibold text-white mb-3">Activity</h3>
+          <ol className="space-y-3 text-sm">
+            {(() => {
+              type Entry = { ts: string; text: string };
+              const entries: Entry[] = [
+                ...statusLog.map<Entry>((l) => ({
+                  ts: l.changedAt,
+                  text: `Stage updated to ${
+                    statusLabels[l.toStatus as keyof typeof statusLabels] ||
+                    l.toStatus
+                  }`,
+                })),
+                ...notes.map<Entry>((n) => ({
+                  ts: n.createdAt,
+                  text: n.body,
+                })),
+              ];
+              return entries
+                .sort((a, b) => b.ts.localeCompare(a.ts))
+                .slice(0, 12)
+                .map((entry, i) => (
+                  <li key={i} className="text-white/80">
+                    <span className="text-white/50 mr-2 text-xs">
+                      {new Date(entry.ts).toLocaleString("en-AU", {
+                        day: "numeric",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    {entry.text}
+                  </li>
+                ));
+            })()}
+          </ol>
         </div>
       )}
     </div>
