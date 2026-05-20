@@ -8,13 +8,33 @@ export type AuthSession = {
 /**
  * Returns the currently signed-in user from the request cookies, or null
  * if the user is not authenticated / Supabase is not configured.
+ *
+ * Side effect: when a session is found and Sentry is configured, binds
+ * the user as the Sentry scope identity so any subsequent
+ * `Sentry.captureException` calls during this request carry the user
+ * info — much more useful for triaging support tickets.
  */
 export async function getSession(): Promise<AuthSession | null> {
   const supabase = await getSupabaseServerClient();
   if (!supabase) return null;
   const { data, error } = await supabase.auth.getUser();
   if (error || !data?.user || !data.user.email) return null;
-  return { userId: data.user.id, email: data.user.email };
+  const session: AuthSession = {
+    userId: data.user.id,
+    email: data.user.email,
+  };
+  // Best-effort Sentry user binding. Dynamic import to avoid pulling
+  // Sentry into routes that don't otherwise import it; no-op when DSN
+  // is unset.
+  if (process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN) {
+    try {
+      const Sentry = await import("@sentry/nextjs");
+      Sentry.setUser({ id: session.userId, email: session.email });
+    } catch {
+      /* Sentry import failed — ignore */
+    }
+  }
+  return session;
 }
 
 /**

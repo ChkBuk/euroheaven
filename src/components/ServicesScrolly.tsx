@@ -35,10 +35,38 @@ export default function ServicesScrolly() {
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  // Tracks whether the carousel is currently in the viewport. Autoplay
+  // only runs while inView is true; leaving the section snaps the
+  // carousel back to slide 0 so the next visit always starts fresh.
+  const [inView, setInView] = useState(false);
 
   useEffect(() => {
     activeRef.current = active;
   }, [active]);
+
+  // Watch the section's visibility. Triggers on ~25% visible so the
+  // user sees motion as the section enters the screen, not before.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          setInView(entry.isIntersecting);
+        }
+      },
+      { threshold: [0, 0.25] }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  // Reset to slide 0 whenever the carousel leaves the viewport, so the
+  // next scroll-into-view always starts on the first card regardless of
+  // direction (down→up reveal lands on slide 0 just as up→down does).
+  useEffect(() => {
+    if (!inView) setActive(0);
+  }, [inView]);
 
   useIsoLayoutEffect(() => {
     const reduce = window.matchMedia?.(
@@ -159,15 +187,18 @@ export default function ServicesScrolly() {
     };
   }, []);
 
-  // Auto-loop — continuous, never pauses. Timer resets whenever `active`
-  // changes (manual or auto) so the next tick is a full AUTOPLAY_MS away.
+  // Auto-loop — runs only while the section is in view. Timer resets on
+  // every `active` change (manual or auto) so the next tick is a full
+  // AUTOPLAY_MS away. When out of view, the separate effect above resets
+  // `active` to 0 so the user always sees slide 1 as the carousel
+  // re-enters the screen.
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion || !inView) return;
     const timer = setInterval(() => {
       setActive((prev) => (prev + 1) % N);
     }, AUTOPLAY_MS);
     return () => clearInterval(timer);
-  }, [reducedMotion, active]);
+  }, [reducedMotion, inView, active]);
 
   const goTo = (i: number) => setActive(((i % N) + N) % N);
   const next = () => goTo(active + 1);

@@ -8,6 +8,7 @@ import {
   createCalendarEvent,
   sendBookingEmail,
   sendBookingSMS,
+  notifyStaffOfNewBooking,
 } from "@/lib/integrations";
 
 export async function POST(req: Request) {
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
     createCalendarEvent(booking),
     sendBookingEmail(booking),
     sendBookingSMS(booking),
+    notifyStaffOfNewBooking(booking),
   ]);
 
   return NextResponse.json({

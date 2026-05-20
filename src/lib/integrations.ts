@@ -329,6 +329,43 @@ export async function sendBookingSMS(b: Booking) {
   }
 }
 
+/**
+ * Alert the workshop owner via SMS when a new booking arrives. Reads the
+ * owner's mobile from `STAFF_NOTIFICATION_PHONE`; falls back to console
+ * log when unset (so dev / Twilio-disabled deploys keep working).
+ *
+ * Distinct from `sendBookingSMS` which texts the *customer* their
+ * confirmation. This one buzzes the owner's phone so they know to
+ * expect a car without checking /admin.
+ */
+export async function notifyStaffOfNewBooking(b: Booking) {
+  const staffPhone = process.env.STAFF_NOTIFICATION_PHONE;
+  if (!staffPhone) {
+    console.log(
+      "[sms stub] Would alert staff:",
+      b.reference,
+      `${b.year} ${b.model}`,
+      b.name
+    );
+    return;
+  }
+  if (!process.env.TWILIO_AUTH_TOKEN) {
+    console.log("[sms stub] Twilio unset; skip staff alert for", b.reference);
+    return;
+  }
+  try {
+    const adminUrl = `${siteUrlForLinks()}/admin/bookings/${b.reference}`;
+    // Keep under 160 chars so it stays a single segment.
+    const body = `New booking ${b.reference}: ${b.year} ${b.model} from ${b.name} (${b.phone}). ${b.date} ${b.timeSlot}. ${adminUrl}`;
+    await sendViaTwilio({
+      to: toE164(staffPhone),
+      body: body.slice(0, 320), // safe upper bound for 2-segment SMS
+    });
+  } catch (err) {
+    console.error("[sms] notifyStaffOfNewBooking failed:", err);
+  }
+}
+
 export async function sendStatusUpdate(b: Booking) {
   const label = statusLabels[b.status];
   console.log(`[status update] ${b.reference} → ${label}`);
