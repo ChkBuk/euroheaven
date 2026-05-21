@@ -7,6 +7,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import {
   createCalendarEvent,
   sendBookingEmail,
+  sendCustomerBookingConfirmation,
   sendBookingSMS,
   notifyStaffOfNewBooking,
 } from "@/lib/integrations";
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
   await Promise.all([
     createCalendarEvent(booking),
     sendBookingEmail(booking),
+    sendCustomerBookingConfirmation(booking),
     sendBookingSMS(booking),
     notifyStaffOfNewBooking(booking),
   ]);

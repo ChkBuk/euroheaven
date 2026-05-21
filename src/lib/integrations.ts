@@ -20,13 +20,21 @@ async function sendViaResend(opts: {
   subject: string;
   html: string;
   replyTo?: string;
+  /**
+   * Optional override for the recipient. When omitted, falls back to the
+   * RESEND_TO_EMAIL env var (used for staff-inbox notifications like
+   * booking leads, contact forms, newsletter signups). Pass an explicit
+   * value when the email is for a specific recipient — e.g. a customer
+   * confirmation.
+   */
+  to?: string;
 }): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  const to = process.env.RESEND_TO_EMAIL;
+  const to = opts.to ?? process.env.RESEND_TO_EMAIL;
   if (!apiKey || !from || !to) {
     throw new Error(
-      "Missing RESEND_API_KEY, RESEND_FROM_EMAIL, or RESEND_TO_EMAIL"
+      "Missing RESEND_API_KEY, RESEND_FROM_EMAIL, or recipient address"
     );
   }
   const resp = await fetch("https://api.resend.com/emails", {
@@ -136,6 +144,10 @@ export async function createCalendarEvent(b: Booking) {
 
     const adminUrl = `${siteUrlForLinks()}/admin/bookings/${b.reference}`;
 
+    // Note: service accounts can't invite attendees without Domain-Wide
+    // Delegation (a paid Workspace feature). We embed customer contact
+    // details in the description instead — the owner sees them at a glance
+    // and the customer already receives separate SMS / email confirmations.
     const event = {
       summary: `${b.reference} · ${b.year} ${b.model} — ${b.serviceSlug.replace(/-/g, " ")}`,
       description:
@@ -146,7 +158,6 @@ export async function createCalendarEvent(b: Booking) {
         `Manage: ${adminUrl}`,
       start: { dateTime: start.toISOString(), timeZone: "Australia/Melbourne" },
       end: { dateTime: end.toISOString(), timeZone: "Australia/Melbourne" },
-      attendees: [{ email: b.email, displayName: b.name }],
     };
 
     const resp = await fetch(
@@ -212,6 +223,79 @@ export async function sendBookingEmail(b: Booking) {
     await sendViaResend({ subject, html, replyTo: b.email });
   } catch (err) {
     console.error("[email] sendBookingEmail failed:", err);
+  }
+}
+
+/**
+ * Customer-facing booking confirmation. Sends a branded "Your booking
+ * is confirmed" email to the customer's address (b.email). The
+ * RESEND_FROM_EMAIL domain must be verified at Resend for this to
+ * actually deliver — Resend's test sender (onboarding@resend.dev) will
+ * 403 on any recipient other than the account signup email.
+ */
+export async function sendCustomerBookingConfirmation(b: Booking) {
+  if (!process.env.RESEND_API_KEY) {
+    console.log(
+      "[email stub] Would email customer",
+      b.email,
+      "ref",
+      b.reference
+    );
+    return;
+  }
+  const service = services.find((s) => s.slug === b.serviceSlug);
+  const serviceLabel = service?.title ?? b.serviceSlug;
+  const dropOffLabel =
+    dropOffOptions.find((d) => d.value === b.dropOff)?.label ?? b.dropOff;
+  const trackUrl = `${siteUrlForLinks()}/track?ref=${b.reference}`;
+
+  const subject = `Your Euro Heaven booking is confirmed — ${b.reference}`;
+  const firstName = b.name.split(" ")[0] || "there";
+  const html = `
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;color:#1a1d23;line-height:1.55">
+      <div style="background:#0c131c;padding:22px 28px;border-radius:12px 12px 0 0">
+        <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:0.5px">EURO HEAVEN</div>
+        <div style="font-size:11px;color:#9aa3ad;letter-spacing:2px;text-transform:uppercase;margin-top:2px">European Vehicle Specialists · Melbourne</div>
+      </div>
+      <div style="background:#fff;padding:32px 28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
+        <h1 style="margin:0 0 14px 0;font-size:22px;font-weight:700">Hi ${escapeHtml(firstName)}, your booking is confirmed</h1>
+        <p style="margin:0 0 20px 0;color:#4b5563;font-size:15px">
+          Thanks for booking with Euro Heaven. We've reserved a slot for your Mercedes — we'll be in touch as soon as the vehicle arrives.
+        </p>
+
+        <table style="width:100%;border-collapse:collapse;font-size:14px;margin:20px 0">
+          <tr><td style="padding:6px 0;color:#6b7280;width:120px">Reference</td><td style="padding:6px 0;font-weight:600">${escapeHtml(b.reference)}</td></tr>
+          <tr><td style="padding:6px 0;color:#6b7280">Vehicle</td><td style="padding:6px 0">${escapeHtml(`${b.year} ${b.model}`)} · ${escapeHtml(b.rego)}</td></tr>
+          <tr><td style="padding:6px 0;color:#6b7280">Service</td><td style="padding:6px 0">${escapeHtml(serviceLabel)}</td></tr>
+          <tr><td style="padding:6px 0;color:#6b7280">Appointment</td><td style="padding:6px 0">${escapeHtml(b.date)} at ${escapeHtml(b.timeSlot)}</td></tr>
+          <tr><td style="padding:6px 0;color:#6b7280">Drop-off</td><td style="padding:6px 0">${escapeHtml(dropOffLabel)}</td></tr>
+        </table>
+
+        <div style="margin:24px 0">
+          <a href="${trackUrl}" style="display:inline-block;background:#2B6DFF;color:#fff;padding:12px 24px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none">Track your repair →</a>
+        </div>
+
+        <p style="margin:24px 0 0 0;font-size:13px;color:#6b7280">
+          Need to change anything? Reply to this email or call us on
+          <a href="tel:+61400115765" style="color:#2B6DFF;text-decoration:none">400 115 765</a>.
+        </p>
+      </div>
+      <p style="text-align:center;font-size:11px;color:#9aa3ad;margin:14px 0 0 0">
+        Euro Heaven · Dandenong, Victoria · euroheaven.com.au
+      </p>
+    </div>
+  `;
+
+  try {
+    await sendViaResend({
+      to: b.email,
+      subject,
+      html,
+      // Replies from the customer should land in the workshop inbox.
+      replyTo: process.env.RESEND_TO_EMAIL,
+    });
+  } catch (err) {
+    console.error("[email] sendCustomerBookingConfirmation failed:", err);
   }
 }
 
