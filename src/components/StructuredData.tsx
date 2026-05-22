@@ -12,7 +12,7 @@ export default function StructuredData() {
     email: site.email,
     priceRange: "$$",
     image: `${site.url}/og-image.jpg`,
-    logo: `${site.url}/logo.svg`,
+    logo: `${site.url}/logo.jpg`,
     address: {
       "@type": "PostalAddress",
       streetAddress: site.address.street,
@@ -23,8 +23,8 @@ export default function StructuredData() {
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: -37.8197,
-      longitude: 145.0021,
+      latitude: -37.987,
+      longitude: 145.215,
     },
     openingHoursSpecification: [
       {
@@ -64,7 +64,7 @@ export default function StructuredData() {
     "@id": `${site.url}#organization`,
     name: site.name,
     url: site.url,
-    logo: `${site.url}/logo.svg`,
+    logo: `${site.url}/logo.jpg`,
     sameAs: [site.social.facebook, site.social.instagram, site.social.google],
     contactPoint: {
       "@type": "ContactPoint",

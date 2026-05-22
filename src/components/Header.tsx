@@ -43,7 +43,7 @@ export default function Header() {
           aria-label={`${site.name} — home`}
         >
           <img
-            src="/logo.svg"
+            src="/logo.jpg"
             alt={site.name}
             className="h-16 md:h-20 w-auto block"
           />

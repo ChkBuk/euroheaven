@@ -8,10 +8,10 @@ export const site = {
   phoneDisplay: "400 115 765",
   email: "info@euroheaven.com.au",
   address: {
-    street: "123, ABC Avenue",
-    suburb: "Dandedong",
-    state: "Victoria",
-    postcode: "",
+    street: "27 Podmore Street",
+    suburb: "Dandenong",
+    state: "VIC",
+    postcode: "3175",
     country: "Australia",
   },
   hours: [
@@ -19,7 +19,7 @@ export const site = {
     { day: "Saturday", time: "8:00am – 1:00pm" },
     { day: "Sunday", time: "Closed" },
   ],
-  abn: "123 456 789 123",
+  abn: "20 657 028 585",
   social: {
     facebook: "https://facebook.com/euroheaven",
     instagram: "https://instagram.com/euroheaven",

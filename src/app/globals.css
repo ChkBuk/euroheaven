@@ -115,6 +115,21 @@ body {
   .field-input-light {
     @apply w-full border border-ink-900/10 bg-white px-3 py-2 outline-none text-ink-900 placeholder:text-ink-900/30 focus:border-accent focus:ring-2 focus:ring-accent/30 min-h-[44px];
   }
+  /* Force native <option> elements to render with dark text on a light
+     background — without this, Chrome inherits the parent <select>'s
+     text-white colour into the OS-rendered dropdown popup, producing
+     unreadable white-on-white options on Windows + macOS light themes.
+     The `optgroup` rule keeps category labels (e.g. "Compact & Sedan",
+     "SUV", "AMG Performance") visibly grey. */
+  select option {
+    color: #0c131c;
+    background-color: #ffffff;
+  }
+  select optgroup {
+    color: #6b7280;
+    background-color: #ffffff;
+    font-style: normal;
+  }
 
   /* Dashed ring used for abstract backgrounds */
   .ring-dashed {
