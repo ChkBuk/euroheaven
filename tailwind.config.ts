@@ -29,6 +29,22 @@ const config: Config = {
           600: "#293A51",
           500: "#3A4D66",
         },
+        // Chrome palette — matches the EURO HEAVEN logo's metallic
+        // background (dark charcoal) and the silver star/wing accents.
+        // Use for header/footer surfaces that need to blend seamlessly
+        // with the logo image.
+        chrome: {
+          950: "#0F0F10",
+          900: "#1A1A1B", // matches the logo's darkest background pixels
+          800: "#222224", // matches the logo's lighter corner pixels
+          700: "#2D2D30", // hairline borders / dividers
+          600: "#3A3A3D",
+          500: "#5C5C60",
+          400: "#A4AAAE", // medium silver (matches brand.silver)
+          300: "#C2C6CA",
+          200: "#D9DCDF",
+          100: "#EEEFF0",
+        },
         // Blue accent (from reference)
         accent: {
           DEFAULT: "#2B6DFF",

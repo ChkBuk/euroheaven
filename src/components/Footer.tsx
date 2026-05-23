@@ -31,7 +31,12 @@ function GoogleGIcon({ className }: { className?: string }) {
 
 export default function Footer() {
   return (
-    <footer className="bg-ink-900 text-white border-t border-white/5">
+    // Chrome palette matches the logo's charcoal background so the JPG
+    // blends seamlessly into the footer surface. A subtle gradient at
+    // the top edge fades from the chrome-900 floor up toward a slightly
+    // lighter chrome-800 ceiling, giving the section a soft metallic
+    // sheen rather than a flat slab.
+    <footer className="bg-gradient-to-b from-chrome-800 via-chrome-900 to-chrome-950 text-white border-t border-chrome-700">
       <div className="container py-16 grid gap-10 md:grid-cols-12">
         <div className="md:col-span-4">
           <Link href="/" className="flex items-center mb-4">

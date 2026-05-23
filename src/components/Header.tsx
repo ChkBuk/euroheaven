@@ -31,9 +31,11 @@ export default function Header() {
     <header
       className={cn(
         "sticky top-0 z-40 transition-all duration-300",
+        // Matches the logo's charcoal background (sampled #1A1A1B / #222224)
+        // so the JPG seam disappears against the header surface.
         scrolled
-          ? "bg-ink-950/85 backdrop-blur-lg border-b border-white/10"
-          : "bg-transparent border-b border-transparent"
+          ? "bg-chrome-900/95 backdrop-blur-lg border-b border-chrome-700"
+          : "bg-gradient-to-b from-chrome-900/80 via-chrome-900/30 to-transparent border-b border-transparent"
       )}
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
@@ -47,7 +49,10 @@ export default function Header() {
             alt={site.name}
             className="h-16 md:h-20 w-auto block"
           />
-          <span className="hidden md:flex items-center h-16 md:h-20 bg-[#27323b] px-5 text-[10px] uppercase tracking-[0.22em] text-white/50 leading-tight">
+          {/* Companion badge — uses the chrome palette's slightly lighter
+              tone (chrome-800) so it reads as a sibling of the logo, not
+              a pasted-on slab. */}
+          <span className="hidden md:flex items-center h-16 md:h-20 bg-chrome-800 px-5 text-[10px] uppercase tracking-[0.22em] text-chrome-300/80 leading-tight border-l border-chrome-700">
             <span>
               European Vehicle
               <br />
