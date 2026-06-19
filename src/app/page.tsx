@@ -136,7 +136,14 @@ export default function Home() {
             </Reveal>
 
             <Reveal variant="up" delay={400}>
-              <div className="flex flex-col sm:flex-row gap-3 mt-8 sm:justify-center">
+              {/* Hidden on mobile — the MobileCTA fixed bar at the
+                  bottom of the screen already provides Call + Book
+                  Now on small viewports, so duplicating the CTAs in
+                  the hero just creates click-target ambiguity and the
+                  Hero buttons can end up obscured behind the bottom
+                  bar. Visible from sm (640px) up where MobileCTA is
+                  hidden. */}
+              <div className="hidden sm:flex flex-row gap-3 mt-8 justify-center">
                 <Link href="/book" className="btn-primary group">
                   Book Now
                   <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { services } from "@/lib/services";
@@ -32,6 +32,25 @@ export default function BookingWizard() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
+  const wizardRef = useRef<HTMLDivElement | null>(null);
+  const isFirstRender = useRef(true);
+
+  // Whenever the step changes, scroll the wizard card to the top of
+  // the viewport (with a small header offset) so the user sees the
+  // new step's first field without manually scrolling. Skip on the
+  // initial render so we don't yank the page on load.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const el = wizardRef.current;
+    if (!el) return;
+    // Header is sticky at ~64px (mobile) / 80px (md+); offset 96px
+    // covers both with breathing room.
+    const top = el.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
+  }, [step]);
 
   const update = (patch: PartialBooking) =>
     setData((d) => ({ ...d, ...patch }));
@@ -118,7 +137,7 @@ export default function BookingWizard() {
   }
 
   return (
-    <div>
+    <div ref={wizardRef} style={{ scrollMarginTop: "96px" }}>
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2 text-sm">
           <span className="font-medium text-white">
@@ -143,8 +162,16 @@ export default function BookingWizard() {
         {step === 5 && <Step5 data={data} />}
       </div>
 
-      <div className="mt-6 flex justify-between gap-3">
+      {/* `touch-action: manipulation` removes the legacy 300ms tap delay
+          on mobile browsers so Continue / Back respond on first tap.
+          `type="button"` prevents any accidental form-submit semantics
+          if these end up nested inside a <form>. */}
+      <div
+        className="mt-6 flex justify-between gap-3"
+        style={{ touchAction: "manipulation" }}
+      >
         <button
+          type="button"
           onClick={back}
           disabled={step === 0}
           className="btn-ghost disabled:opacity-30"
@@ -152,11 +179,12 @@ export default function BookingWizard() {
           <ChevronLeft className="w-4 h-4" /> Back
         </button>
         {step < STEPS.length - 1 ? (
-          <button onClick={next} className="btn-primary">
+          <button type="button" onClick={next} className="btn-primary">
             Continue <ChevronRight className="w-4 h-4" />
           </button>
         ) : (
           <button
+            type="button"
             onClick={submit}
             disabled={submitting}
             className="btn-primary"
