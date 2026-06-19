@@ -515,16 +515,20 @@ export async function notifyStaffOfNewBooking(b: Booking) {
     `[sms:staff] normalized ${JSON.stringify(staffPhone)} -> ${normalized}`
   );
   try {
-    // Minimal body for trial mode (no URL, no phone), full body otherwise.
+    // Staff URL is always included — it's the whole point of the alert:
+    // give the owner a one-tap path into the booking. Goes to /track
+    // because that's where the magic-link login lives (signing in there
+    // redirects to /admin if the owner is on the staff allowlist).
+    const loginUrl = `${siteUrlForLinks()}/track`;
+    const adminUrl = `${siteUrlForLinks()}/admin/bookings/${b.reference}`;
+    // Trial mode: keep body short, single segment, plain.
+    // Production: full detail with admin link.
     const body = isTrialMode()
-      ? `New booking ${b.reference} ${b.year} ${b.model}.`
-      : (() => {
-          const adminUrl = `${siteUrlForLinks()}/admin/bookings/${b.reference}`;
-          return `New booking ${b.reference}: ${b.year} ${b.model} from ${b.name} (${b.phone}). ${b.date} ${b.timeSlot}. ${adminUrl}`.slice(
-            0,
-            320
-          );
-        })();
+      ? `Euro Heaven new booking ${b.reference}. Login: ${loginUrl}`
+      : `New booking ${b.reference}: ${b.year} ${b.model} from ${b.name} (${b.phone}). ${b.date} ${b.timeSlot}. ${adminUrl}`.slice(
+          0,
+          320
+        );
     await sendViaTwilio({
       context: "staff",
       to: normalized,
@@ -539,30 +543,15 @@ export async function sendStatusUpdate(b: Booking) {
   const label = statusLabels[b.status];
   console.log(`[status update] ${b.reference} → ${label}`);
 
-  // Pick the changes worth notifying the customer about — every micro-stage
-  // update would be spammy.
-  const notifyStatuses: Booking["status"][] = [
-    "received",
-    "quote-sent",
-    "ready-for-pickup",
-    "completed",
-  ];
-  if (!notifyStatuses.includes(b.status)) return;
-
-  if (process.env.TWILIO_AUTH_TOKEN) {
-    const body = isTrialMode()
-      ? `Euro Heaven ${b.reference}: ${label}.`
-      : `Euro Heaven update — ${b.reference}: ${label}. Track at ${siteUrlForLinks()}/track?ref=${b.reference}`;
-    try {
-      await sendViaTwilio({
-        context: "status",
-        to: toE164(b.phone),
-        body,
-      });
-    } catch (err) {
-      console.error("[sms] sendStatusUpdate failed:", err);
-    }
-  }
+  // Customer-facing SMS notifications are intentionally disabled — the
+  // workshop only contacts customers via email and the /track page they
+  // log into. The owner gets a separate SMS via notifyStaffOfNewBooking
+  // when the booking is first created; subsequent stage changes are
+  // visible at /admin without needing a push notification.
+  //
+  // If you ever want to re-enable customer "Your car is ready for
+  // pickup" SMS, restore the sendViaTwilio call below and gate on a new
+  // env var like NOTIFY_CUSTOMER_BY_SMS=true.
 }
 
 function siteUrlForLinks(): string {

@@ -8,7 +8,6 @@ import {
   createCalendarEvent,
   sendBookingEmail,
   sendCustomerBookingConfirmation,
-  sendBookingSMS,
   notifyStaffOfNewBooking,
 } from "@/lib/integrations";
 
@@ -73,11 +72,13 @@ export async function POST(req: Request) {
     );
   }
 
+  // Customer notification: email only (sendCustomerBookingConfirmation).
+  // Owner notification: SMS (notifyStaffOfNewBooking) + email
+  // (sendBookingEmail to the staff inbox).
   await Promise.all([
     createCalendarEvent(booking),
     sendBookingEmail(booking),
     sendCustomerBookingConfirmation(booking),
-    sendBookingSMS(booking),
     notifyStaffOfNewBooking(booking),
   ]);
 
