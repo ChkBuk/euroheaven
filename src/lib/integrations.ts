@@ -443,9 +443,21 @@ function toE164(phone: string): string {
   return `+${trimmed}`;
 }
 
+/**
+ * True when TWILIO_TRIAL_MODE=true. Switches SMS bodies to a minimal
+ * transactional form (no URLs, no marketing language, short single
+ * segment) to reduce AU-carrier spam filtering on trial-account sends.
+ * Trial accounts auto-prepend "Sent from your Twilio trial account - "
+ * which combined with URLs/marketing copy triggers error 30007; the
+ * minimal body has the best chance of slipping past filters.
+ */
+function isTrialMode(): boolean {
+  return process.env.TWILIO_TRIAL_MODE === "true";
+}
+
 export async function sendBookingSMS(b: Booking) {
   console.log(
-    `[sms:customer] entry ref=${b.reference} rawPhone=${JSON.stringify(b.phone)} hasAuthToken=${Boolean(process.env.TWILIO_AUTH_TOKEN)}`
+    `[sms:customer] entry ref=${b.reference} rawPhone=${JSON.stringify(b.phone)} hasAuthToken=${Boolean(process.env.TWILIO_AUTH_TOKEN)} trial=${isTrialMode()}`
   );
   if (!process.env.TWILIO_AUTH_TOKEN) {
     console.log("[sms stub] Would SMS", b.phone, "ref", b.reference);
@@ -455,11 +467,16 @@ export async function sendBookingSMS(b: Booking) {
   console.log(
     `[sms:customer] normalized ${JSON.stringify(b.phone)} -> ${normalized}`
   );
+  // Minimal body for trial accounts — no URL, no marketing fluff.
+  // Full body for upgraded accounts — includes track link.
+  const body = isTrialMode()
+    ? `Euro Heaven booking confirmed. Ref ${b.reference}.`
+    : `Hi ${b.name.split(" ")[0]}, your Euro Heaven booking is confirmed. Reference: ${b.reference}. We'll text you with updates. Track at ${siteUrlForLinks()}/track?ref=${b.reference}`;
   try {
     await sendViaTwilio({
       context: "customer",
       to: normalized,
-      body: `Hi ${b.name.split(" ")[0]}, your Euro Heaven booking is confirmed. Reference: ${b.reference}. We'll text you with updates. Track at ${siteUrlForLinks()}/track?ref=${b.reference}`,
+      body,
     });
   } catch (err) {
     console.error("[sms] sendBookingSMS failed:", err);
@@ -498,13 +515,20 @@ export async function notifyStaffOfNewBooking(b: Booking) {
     `[sms:staff] normalized ${JSON.stringify(staffPhone)} -> ${normalized}`
   );
   try {
-    const adminUrl = `${siteUrlForLinks()}/admin/bookings/${b.reference}`;
-    // Keep under 160 chars so it stays a single segment.
-    const body = `New booking ${b.reference}: ${b.year} ${b.model} from ${b.name} (${b.phone}). ${b.date} ${b.timeSlot}. ${adminUrl}`;
+    // Minimal body for trial mode (no URL, no phone), full body otherwise.
+    const body = isTrialMode()
+      ? `New booking ${b.reference} ${b.year} ${b.model}.`
+      : (() => {
+          const adminUrl = `${siteUrlForLinks()}/admin/bookings/${b.reference}`;
+          return `New booking ${b.reference}: ${b.year} ${b.model} from ${b.name} (${b.phone}). ${b.date} ${b.timeSlot}. ${adminUrl}`.slice(
+            0,
+            320
+          );
+        })();
     await sendViaTwilio({
       context: "staff",
       to: normalized,
-      body: body.slice(0, 320), // safe upper bound for 2-segment SMS
+      body,
     });
   } catch (err) {
     console.error("[sms] notifyStaffOfNewBooking failed:", err);
@@ -526,10 +550,14 @@ export async function sendStatusUpdate(b: Booking) {
   if (!notifyStatuses.includes(b.status)) return;
 
   if (process.env.TWILIO_AUTH_TOKEN) {
+    const body = isTrialMode()
+      ? `Euro Heaven ${b.reference}: ${label}.`
+      : `Euro Heaven update — ${b.reference}: ${label}. Track at ${siteUrlForLinks()}/track?ref=${b.reference}`;
     try {
       await sendViaTwilio({
+        context: "status",
         to: toE164(b.phone),
-        body: `Euro Heaven update — ${b.reference}: ${label}. Track at ${siteUrlForLinks()}/track?ref=${b.reference}`,
+        body,
       });
     } catch (err) {
       console.error("[sms] sendStatusUpdate failed:", err);
