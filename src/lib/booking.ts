@@ -14,9 +14,9 @@ export const bookingSchema = z.object({
   timeSlot: z.string().min(1, "Pick a time"),
   dropOff: z.enum(["drop-off", "wait", "courtesy-car"]),
   name: z.string().min(2, "Enter your name"),
-  phone: z
-    .string()
-    .regex(/^[+]?[\d\s()-]{8,}$/, "Enter a valid phone number"),
+  // Phone is digits-only at the input layer (the Step 4 input strips
+  // anything else) — schema just confirms it's present.
+  phone: z.string().min(1, "Enter your phone number"),
   email: z.string().email("Enter a valid email"),
   notes: z.string().optional(),
 });

@@ -1,10 +1,17 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { X, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { site } from "@/lib/site";
 import AIAssistant from "@/components/AIAssistant";
+
+// Routes where the floating chat bubble should NOT appear. The booking
+// wizard and admin pages need every pixel for their own controls — the
+// bottom-right bubble can overlap the wizard's Continue button on
+// short viewports.
+const HIDDEN_PATHS = ["/book", "/admin", "/auth"];
 
 function BotIcon({ className }: { className?: string }) {
   return (
@@ -55,8 +62,16 @@ function MessengerIcon({ className }: { className?: string }) {
 }
 
 export default function FloatingChat() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
+
+  if (
+    pathname &&
+    HIDDEN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+  ) {
+    return null;
+  }
 
   const phoneForWhatsApp = site.phone.replace(/[^\d]/g, "");
   const whatsappUrl = `https://wa.me/${phoneForWhatsApp}`;

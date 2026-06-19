@@ -33,15 +33,17 @@ export default function BookingWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
   const wizardRef = useRef<HTMLDivElement | null>(null);
-  const isFirstRender = useRef(true);
+  const continueRowRef = useRef<HTMLDivElement | null>(null);
+  const isFirstStepRender = useRef(true);
+  const isFirstDataRender = useRef(true);
 
   // Whenever the step changes, scroll the wizard card to the top of
   // the viewport (with a small header offset) so the user sees the
   // new step's first field without manually scrolling. Skip on the
   // initial render so we don't yank the page on load.
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
+    if (isFirstStepRender.current) {
+      isFirstStepRender.current = false;
       return;
     }
     const el = wizardRef.current;
@@ -51,6 +53,32 @@ export default function BookingWizard() {
     const top = el.getBoundingClientRect().top + window.scrollY - 96;
     window.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
   }, [step]);
+
+  // Whenever the user makes a discrete selection (service, date, time
+  // slot, drop-off, or toggles a symptom), smoothly scroll the
+  // Continue button row into view. This naturally reveals any
+  // intermediate fields between the current scroll position and the
+  // bottom of the step, ending at Continue. We intentionally do NOT
+  // trigger on text-input changes — auto-scrolling on every keystroke
+  // is jarring. Users typing in text fields can scroll manually or use
+  // the next-focus / Tab key.
+  useEffect(() => {
+    if (isFirstDataRender.current) {
+      isFirstDataRender.current = false;
+      return;
+    }
+    const el = continueRowRef.current;
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [
+    data.serviceSlug,
+    data.date,
+    data.timeSlot,
+    data.dropOff,
+    // Joining keys the dep on the array's identity-string so toggling
+    // a symptom in/out fires the effect even when length is unchanged.
+    data.symptoms?.join(","),
+  ]);
 
   const update = (patch: PartialBooking) =>
     setData((d) => ({ ...d, ...patch }));
@@ -167,8 +195,9 @@ export default function BookingWizard() {
           `type="button"` prevents any accidental form-submit semantics
           if these end up nested inside a <form>. */}
       <div
+        ref={continueRowRef}
         className="mt-6 flex justify-between gap-3"
-        style={{ touchAction: "manipulation" }}
+        style={{ touchAction: "manipulation", scrollMarginBottom: "16px" }}
       >
         <button
           type="button"
@@ -526,9 +555,16 @@ function Step4({
           <Field label="Mobile phone" error={errors.phone}>
             <input
               type="tel"
-              placeholder="04XX XXX XXX"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="04XXXXXXXX"
               value={data.phone || ""}
-              onChange={(e) => update({ phone: e.target.value })}
+              onChange={(e) =>
+                // Strip everything except digits so the user can only
+                // enter numbers, regardless of whether they paste or
+                // type. Mobile keyboards open in numeric mode too.
+                update({ phone: e.target.value.replace(/[^\d]/g, "") })
+              }
               className="field-input"
             />
           </Field>
