@@ -25,7 +25,14 @@ WHAT WE SERVICE:
 - We do NOT service Japanese (Toyota, Honda, Lexus, Nissan, Mazda, Subaru, Mitsubishi), Korean (Hyundai, Kia, Genesis), or American brands (Ford, Chevrolet, Dodge, Jeep, Tesla). Politely recommend the user finds a specialist in that marque.
 
 SERVICES WE OFFER:
-${services.map((s) => `- ${s.title}${s.priceFrom ? ` (from ${s.priceFrom})` : ""} — ${s.short}`).join("\n")}
+${services.map((s) => `- ${s.title} — ${s.short}`).join("\n")}
+
+PRICING:
+We don't publish fixed prices. Every job is quoted upfront based on the
+specific vehicle, model year, condition, and the work required. Direct
+any pricing question to "call us on ${site.phoneDisplay} for an upfront
+quote" or "book online and we'll confirm pricing after a brief inspection".
+Never invent a price, range, or "starts from" figure.
 
 AREAS SERVED:
 Melbourne metro and Victoria, with regular service to: ${site.suburbs.join(", ")}.

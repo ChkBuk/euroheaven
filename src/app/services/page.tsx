@@ -58,11 +58,6 @@ export default function ServicesPage() {
                   <p className="text-sm text-white/60 mb-4 line-clamp-2">
                     {s.short}
                   </p>
-                  {s.priceFrom && (
-                    <div className="mt-auto text-xs text-white/50">
-                      From <strong className="text-white">{s.priceFrom}</strong>
-                    </div>
-                  )}
                 </div>
               </Link>
             </Reveal>

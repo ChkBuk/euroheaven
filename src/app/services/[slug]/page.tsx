@@ -59,13 +59,6 @@ export default async function ServiceDetail({
     provider: { "@type": "AutoRepair", name: site.name, url: site.url },
     areaServed: "Melbourne, Victoria, Australia",
     description: service.description,
-    offers: service.priceFrom
-      ? {
-          "@type": "Offer",
-          priceCurrency: "AUD",
-          price: service.priceFrom.replace(/[^0-9]/g, ""),
-        }
-      : undefined,
   };
 
   return (
@@ -114,14 +107,6 @@ export default async function ServiceDetail({
                   <Link href="/book" className="btn-primary">
                     Book This Service <ArrowUpRight className="w-4 h-4" />
                   </Link>
-                  {service.priceFrom && (
-                    <div className="btn bg-white/5 border border-white/10 text-white">
-                      From{" "}
-                      <strong className="ml-1 text-accent">
-                        {service.priceFrom}
-                      </strong>
-                    </div>
-                  )}
                 </div>
               </div>
             </Reveal>

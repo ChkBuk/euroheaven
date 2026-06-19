@@ -411,11 +411,6 @@ function CardBody({
             <Link href={`/services/${s.slug}`} className="btn-primary">
               Find out more <ArrowUpRight className="w-4 h-4" />
             </Link>
-            {s.priceFrom && (
-              <div className="text-sm text-white/80">
-                From <strong className="text-white">{s.priceFrom}</strong>
-              </div>
-            )}
           </div>
         </div>
       </div>
