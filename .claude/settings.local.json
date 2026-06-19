@@ -8,5 +8,8 @@
       "Bash(curl -s -o /dev/null -w \"admin: %{http_code}\\\\n\" http://localhost:3421/admin)",
       "Bash(xargs -I {} basename {})"
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "supabase"
+  ]
 }

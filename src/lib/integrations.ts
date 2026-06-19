@@ -357,35 +357,80 @@ export async function sendNewsletterNotification(email: string) {
 async function sendViaTwilio(opts: {
   to: string;
   body: string;
+  /** Identifies the caller in logs — e.g. "customer" or "staff". */
+  context?: string;
 }): Promise<void> {
+  const ctx = opts.context ?? "sms";
   const sid = process.env.TWILIO_ACCOUNT_SID;
   const token = process.env.TWILIO_AUTH_TOKEN;
   const from = process.env.TWILIO_FROM_NUMBER;
+
+  // Detailed presence check so a missing var is obvious in logs.
   if (!sid || !token || !from) {
-    throw new Error(
-      "Missing TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, or TWILIO_FROM_NUMBER"
+    const missing = [
+      !sid && "TWILIO_ACCOUNT_SID",
+      !token && "TWILIO_AUTH_TOKEN",
+      !from && "TWILIO_FROM_NUMBER",
+    ]
+      .filter(Boolean)
+      .join(", ");
+    console.error(`[sms:${ctx}] missing env vars: ${missing}`);
+    throw new Error(`Missing Twilio env vars: ${missing}`);
+  }
+
+  // Sanity-check FROM format — Twilio rejects anything that isn't E.164.
+  if (!from.startsWith("+")) {
+    console.warn(
+      `[sms:${ctx}] TWILIO_FROM_NUMBER ${JSON.stringify(from)} does not start with "+"; Twilio will likely reject. Use E.164 format like "+61480090974".`
     );
   }
+
+  console.log(
+    `[sms:${ctx}] sending to=${opts.to} from=${from} sidPrefix=${sid.slice(0, 4)}... bodyLen=${opts.body.length}`
+  );
+
   const auth = Buffer.from(`${sid}:${token}`).toString("base64");
   const params = new URLSearchParams({
     To: opts.to,
     From: from,
     Body: opts.body.slice(0, 1500), // Twilio caps at ~1600 chars per segment
   });
-  const resp = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${auth}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: params,
-    }
-  );
+  let resp: Response;
+  try {
+    resp = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params,
+      }
+    );
+  } catch (netErr) {
+    console.error(`[sms:${ctx}] network error reaching Twilio:`, netErr);
+    throw netErr;
+  }
+
   if (!resp.ok) {
     const body = await resp.text().catch(() => "");
+    console.error(
+      `[sms:${ctx}] Twilio rejected (${resp.status}):`,
+      body.slice(0, 500)
+    );
     throw new Error(`Twilio ${resp.status}: ${body.slice(0, 300)}`);
+  }
+
+  // Successful submission — log Twilio's SID for the message so it can be
+  // looked up in the Twilio Console → Messaging Logs.
+  try {
+    const data = (await resp.json()) as { sid?: string; status?: string };
+    console.log(
+      `[sms:${ctx}] Twilio accepted: messageSid=${data.sid} status=${data.status}`
+    );
+  } catch {
+    console.log(`[sms:${ctx}] Twilio accepted (no body to parse)`);
   }
 }
 
@@ -399,13 +444,21 @@ function toE164(phone: string): string {
 }
 
 export async function sendBookingSMS(b: Booking) {
+  console.log(
+    `[sms:customer] entry ref=${b.reference} rawPhone=${JSON.stringify(b.phone)} hasAuthToken=${Boolean(process.env.TWILIO_AUTH_TOKEN)}`
+  );
   if (!process.env.TWILIO_AUTH_TOKEN) {
     console.log("[sms stub] Would SMS", b.phone, "ref", b.reference);
     return;
   }
+  const normalized = toE164(b.phone);
+  console.log(
+    `[sms:customer] normalized ${JSON.stringify(b.phone)} -> ${normalized}`
+  );
   try {
     await sendViaTwilio({
-      to: toE164(b.phone),
+      context: "customer",
+      to: normalized,
       body: `Hi ${b.name.split(" ")[0]}, your Euro Heaven booking is confirmed. Reference: ${b.reference}. We'll text you with updates. Track at ${siteUrlForLinks()}/track?ref=${b.reference}`,
     });
   } catch (err) {
@@ -424,6 +477,9 @@ export async function sendBookingSMS(b: Booking) {
  */
 export async function notifyStaffOfNewBooking(b: Booking) {
   const staffPhone = process.env.STAFF_NOTIFICATION_PHONE;
+  console.log(
+    `[sms:staff] entry ref=${b.reference} hasStaffPhone=${Boolean(staffPhone)} hasAuthToken=${Boolean(process.env.TWILIO_AUTH_TOKEN)}`
+  );
   if (!staffPhone) {
     console.log(
       "[sms stub] Would alert staff:",
@@ -437,12 +493,17 @@ export async function notifyStaffOfNewBooking(b: Booking) {
     console.log("[sms stub] Twilio unset; skip staff alert for", b.reference);
     return;
   }
+  const normalized = toE164(staffPhone);
+  console.log(
+    `[sms:staff] normalized ${JSON.stringify(staffPhone)} -> ${normalized}`
+  );
   try {
     const adminUrl = `${siteUrlForLinks()}/admin/bookings/${b.reference}`;
     // Keep under 160 chars so it stays a single segment.
     const body = `New booking ${b.reference}: ${b.year} ${b.model} from ${b.name} (${b.phone}). ${b.date} ${b.timeSlot}. ${adminUrl}`;
     await sendViaTwilio({
-      to: toE164(staffPhone),
+      context: "staff",
+      to: normalized,
       body: body.slice(0, 320), // safe upper bound for 2-segment SMS
     });
   } catch (err) {
