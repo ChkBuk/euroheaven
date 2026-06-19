@@ -515,16 +515,20 @@ export async function notifyStaffOfNewBooking(b: Booking) {
     `[sms:staff] normalized ${JSON.stringify(staffPhone)} -> ${normalized}`
   );
   try {
-    // Staff URL is always included — it's the whole point of the alert:
-    // give the owner a one-tap path into the booking. Goes to /track
-    // because that's where the magic-link login lives (signing in there
-    // redirects to /admin if the owner is on the staff allowlist).
-    const loginUrl = `${siteUrlForLinks()}/track`;
+    // Staff URL always points at the booking detail page. The /admin
+    // layout transparently handles auth: if the owner already has an
+    // active session, they go straight to the booking; if not, they're
+    // redirected through the magic-link login at /track and then bounced
+    // back here. Either way, one tap from SMS lands in the right place.
     const adminUrl = `${siteUrlForLinks()}/admin/bookings/${b.reference}`;
-    // Trial mode: keep body short, single segment, plain.
-    // Production: full detail with admin link.
+    // Trial mode: keep body short but include customer name + phone
+    // so the owner has actionable info without opening the URL.
+    // Production: full detail with vehicle, date/time, and admin link.
     const body = isTrialMode()
-      ? `Euro Heaven new booking ${b.reference}. Login: ${loginUrl}`
+      ? `Euro Heaven booking ${b.reference} from ${b.name} (${b.phone}). ${adminUrl}`.slice(
+          0,
+          320
+        )
       : `New booking ${b.reference}: ${b.year} ${b.model} from ${b.name} (${b.phone}). ${b.date} ${b.timeSlot}. ${adminUrl}`.slice(
           0,
           320
