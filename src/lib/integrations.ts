@@ -521,11 +521,16 @@ export async function notifyStaffOfNewBooking(b: Booking) {
     // redirected through the magic-link login at /track and then bounced
     // back here. Either way, one tap from SMS lands in the right place.
     const adminUrl = `${siteUrlForLinks()}/admin/bookings/${b.reference}`;
-    // Trial mode: keep body short but include customer name + phone
-    // so the owner has actionable info without opening the URL.
-    // Production: full detail with vehicle, date/time, and admin link.
+    // Trial mode: NO URL — Twilio trial accounts auto-prepend "Sent
+    // from your Twilio trial account - " and AU carriers reject the
+    // combined prefix+URL combination with error 30007 (carrier
+    // guidelines). Body is name + phone + booking ref only; owner
+    // navigates to /admin manually (bookmark recommended).
+    //
+    // Production: full detail with vehicle, date/time, and direct
+    // admin link.
     const body = isTrialMode()
-      ? `Euro Heaven booking ${b.reference} from ${b.name} (${b.phone}). ${adminUrl}`.slice(
+      ? `Euro Heaven booking ${b.reference} from ${b.name} (${b.phone}).`.slice(
           0,
           320
         )
