@@ -41,7 +41,7 @@ export default function Footer() {
         <div className="md:col-span-4">
           <Link href="/" className="flex items-center mb-4">
             <img
-              src="/logo.jpg"
+              src="/logo.png"
               alt={site.name}
               className="h-16 md:h-20 w-auto"
             />

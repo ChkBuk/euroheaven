@@ -30,8 +30,13 @@ export default function ContactPage() {
       </section>
 
       <section className="section bg-ink-950">
-        <div className="container grid md:grid-cols-2 gap-8">
-          <div className="space-y-4">
+        <div className="container grid md:grid-cols-2 gap-8 items-stretch">
+          {/* Left column: h-full so it fills the grid row height (which
+              is determined by the taller "Send us a message" card on the
+              right). md:justify-between then distributes the 4 contact
+              cards evenly down that full height, with gap-4 acting as a
+              floor on mobile where there's no equal-height constraint. */}
+          <div className="flex flex-col gap-4 h-full md:justify-between">
             {[
               { icon: MapPin, title: "Workshop", value: `${site.address.street}\n${site.address.suburb} ${site.address.state} ${site.address.postcode}`, href: null },
               { icon: Phone, title: "Phone", value: site.phoneDisplay, href: `tel:${site.phone}` },

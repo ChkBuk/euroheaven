@@ -26,7 +26,7 @@ export const site = {
     google: "https://g.page/euroheaven",
   },
   stats: {
-    yearsInBusiness: 18,
+    yearsInBusiness: 4,
     carsServiced: "12,000+",
     googleRating: 4.9,
     googleReviewCount: 284,

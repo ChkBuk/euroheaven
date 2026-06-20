@@ -12,7 +12,7 @@ export default function StructuredData() {
     email: site.email,
     priceRange: "$$",
     image: `${site.url}/og-image.jpg`,
-    logo: `${site.url}/logo.jpg`,
+    logo: `${site.url}/logo.png`,
     address: {
       "@type": "PostalAddress",
       streetAddress: site.address.street,
@@ -64,7 +64,7 @@ export default function StructuredData() {
     "@id": `${site.url}#organization`,
     name: site.name,
     url: site.url,
-    logo: `${site.url}/logo.jpg`,
+    logo: `${site.url}/logo.png`,
     sameAs: [site.social.facebook, site.social.instagram, site.social.google],
     contactPoint: {
       "@type": "ContactPoint",
