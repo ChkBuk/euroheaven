@@ -240,9 +240,15 @@ function StatusTimeline({
 
       <ol className="space-y-3">
         {visibleStages.map((s) => {
-          const active = s === booking.status;
-          const visited = visitedStages.has(s);
-          const done = visited && !active;
+          // "Completed" is a terminal state — it's never "in progress",
+          // and it only renders as done (green check) when the booking
+          // has actually reached it. This prevents a false "Completed ✓"
+          // appearing while the car is still on the workshop floor.
+          const isCompleted = s === "completed";
+          const done = isCompleted
+            ? booking.status === "completed"
+            : visitedStages.has(s) && s !== booking.status;
+          const active = !isCompleted && s === booking.status;
           return (
             <li
               key={s}
