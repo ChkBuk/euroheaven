@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import Link from "next/link";
+import { LogOut } from "lucide-react";
 import { getSession, isStaff } from "@/lib/auth/session";
 
 export default async function AdminLayout({
@@ -15,10 +17,17 @@ export default async function AdminLayout({
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
 
+  let signedInEmail: string | null = null;
+
   if (supabaseConfigured) {
     const session = await getSession();
     if (!session) {
-      redirect("/track?next=/admin");
+      // Capture the exact path the user was trying to reach so they
+      // land back here after sign-in. `x-pathname` is set by the
+      // middleware in src/middleware.ts.
+      const hdrs = await headers();
+      const currentPath = hdrs.get("x-pathname") || "/admin";
+      redirect(`/staff/login?next=${encodeURIComponent(currentPath)}`);
     }
     if (!(await isStaff(session.email))) {
       // Authenticated but not staff — render the not-allowed message rather
@@ -39,7 +48,51 @@ export default async function AdminLayout({
         </section>
       );
     }
+    signedInEmail = session.email;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {/* Sticky staff bar — shows who's signed in, links back to the
+          dashboard, and provides a one-tap sign-out. Always visible
+          across every /admin/* page so the user can never lose track of
+          where they are or how to log out. */}
+      <div className="sticky top-0 z-30 bg-ink-950 border-b border-white/10 backdrop-blur">
+        <div className="container flex flex-wrap items-center justify-between gap-3 py-3">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin"
+              className="text-sm font-semibold text-white hover:text-accent transition-colors"
+            >
+              Workshop Admin
+            </Link>
+            <span className="text-white/30">·</span>
+            <Link
+              href="/admin"
+              className="text-xs text-white/55 hover:text-white"
+            >
+              Bookings
+            </Link>
+          </div>
+          <div className="flex items-center gap-3 text-xs">
+            {signedInEmail && (
+              <span className="text-white/55 hidden sm:inline">
+                Signed in as{" "}
+                <strong className="text-white">{signedInEmail}</strong>
+              </span>
+            )}
+            <form action="/api/auth/sign-out" method="post">
+              <button
+                type="submit"
+                className="inline-flex items-center gap-1.5 text-white/65 hover:text-accent transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" /> Sign out
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {children}
+    </>
+  );
 }

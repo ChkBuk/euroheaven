@@ -6,6 +6,9 @@ import { site } from "@/lib/site";
 
 const schema = z.object({
   email: z.string().email("Enter a valid email").max(200),
+  // Optional post-login destination (e.g. /admin/bookings/MBR-XXX).
+  // Sanitised below to local paths only.
+  next: z.string().max(500).optional(),
 });
 
 export async function POST(req: Request) {
@@ -43,10 +46,16 @@ export async function POST(req: Request) {
   }
 
   const origin = new URL(req.url).origin || site.url;
+  // Sanitise the next path: only allow local absolute paths beginning
+  // with "/" so attackers can't inject an open-redirect destination
+  // via the magic-link form.
+  const requestedNext = parsed.data.next;
+  const safeNext =
+    requestedNext && requestedNext.startsWith("/") ? requestedNext : "/track";
   const { error } = await supabase.auth.signInWithOtp({
     email: parsed.data.email,
     options: {
-      emailRedirectTo: `${origin}/auth/callback?next=/track`,
+      emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(safeNext)}`,
       shouldCreateUser: true,
     },
   });
