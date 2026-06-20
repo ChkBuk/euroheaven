@@ -39,14 +39,17 @@ export default function Header() {
           : "border-b border-transparent"
       )}
       style={{
-        // Subtle dark gradient sits on top of bg.png so nav links stay
-        // legible without fully washing the image out. Drop the opacity
-        // further (e.g. 0.25) if you want the image to read stronger.
-        backgroundImage:
-          "linear-gradient(rgba(15,15,16,0.55), rgba(15,15,16,0.55)), url('/bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        // bg.png is a 680×32768 strip sampled from logo.jpg's left edge.
+        // - No tint overlay: any wash would create a seam against the logo.
+        // - background-size: auto 100% scales the image to the header
+        //   height while preserving its aspect ratio (no crop, no stretch).
+        // - background-repeat: repeat-x tiles the resulting narrow strip
+        //   horizontally, producing a continuous band that visually
+        //   matches logo.jpg's left edge across the full header width.
+        backgroundImage: "url('/bg.png')",
+        backgroundSize: "auto 100%",
+        backgroundPosition: "left top",
+        backgroundRepeat: "repeat-x",
       }}
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
