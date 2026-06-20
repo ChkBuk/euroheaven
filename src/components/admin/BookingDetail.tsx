@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   statusLabels,
   statusOrder,
@@ -28,6 +28,20 @@ export default function BookingDetail({
   const [noteVisibility, setNoteVisibility] = useState<"public" | "internal">(
     "public"
   );
+  // Holds the stage the user clicked while a confirmation dialog is
+  // shown. `null` = no dialog open. Clicking a stage no longer fires
+  // the PATCH immediately; the dialog gates it.
+  const [pendingStage, setPendingStage] = useState<RepairStatus | null>(null);
+
+  // Dismiss the confirmation dialog with the Escape key.
+  useEffect(() => {
+    if (!pendingStage) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPendingStage(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [pendingStage]);
 
   async function refresh() {
     const r = await fetch(`/api/bookings/${booking.reference}/timeline`, {
@@ -183,12 +197,12 @@ export default function BookingDetail({
             {statusOrder.map((s) => (
               <button
                 key={s}
-                disabled={saving}
-                onClick={() => updateStage(s, noteBody)}
+                disabled={saving || booking.status === s}
+                onClick={() => setPendingStage(s)}
                 className={cn(
                   "px-3 py-1.5 rounded-full text-xs border transition-colors disabled:opacity-50",
                   booking.status === s
-                    ? "bg-accent text-white border-accent"
+                    ? "bg-accent text-white border-accent cursor-default"
                     : "bg-ink-900 border-white/10 text-white/70 hover:border-white/25"
                 )}
               >
@@ -198,6 +212,71 @@ export default function BookingDetail({
           </div>
         </div>
       </div>
+
+      {/* Confirmation dialog for stage updates. Renders only when a
+          stage button has been clicked and the change hasn't yet been
+          confirmed. Click-outside or Escape dismisses; Confirm fires
+          the PATCH (with the optional note attached). */}
+      {pendingStage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="stage-confirm-title"
+          className="fixed inset-0 z-50 grid place-items-center bg-black/65 backdrop-blur-sm p-4"
+          onClick={() => !saving && setPendingStage(null)}
+        >
+          <div
+            className="card-dark max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3
+              id="stage-confirm-title"
+              className="font-semibold text-lg mb-3"
+            >
+              Update repair stage?
+            </h3>
+            <p className="text-sm text-white/75 mb-2">
+              Change <strong>{booking.reference}</strong> from{" "}
+              <strong>{statusLabels[booking.status]}</strong> to{" "}
+              <strong>{statusLabels[pendingStage]}</strong>?
+            </p>
+            {noteBody.trim() && (
+              <p className="text-xs text-white/55 mb-2">
+                A note will be attached (
+                {noteVisibility === "public"
+                  ? "visible to customer"
+                  : "internal only"}
+                ).
+              </p>
+            )}
+            <p className="text-xs text-white/40 mb-5">
+              The customer&apos;s tracking page updates within a few seconds.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => setPendingStage(null)}
+                disabled={saving}
+                className="btn-ghost text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={async () => {
+                  const next = pendingStage;
+                  setPendingStage(null);
+                  await updateStage(next, noteBody);
+                }}
+                className="btn-primary text-sm disabled:opacity-50"
+              >
+                {saving ? "Updating…" : "Update stage"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Right: timeline */}
       <aside className="space-y-3">

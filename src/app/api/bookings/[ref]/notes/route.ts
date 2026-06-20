@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/store";
 import { getStaffSession } from "@/lib/auth/session";
+import { sendCustomerNote } from "@/lib/integrations";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,14 @@ export async function POST(req: Request, { params }: { params: RouteParams }) {
       statusAt: parsed.data.statusAt ?? booking.status,
       createdByEmail: actorEmail,
     });
+    // Customer-visible notes get pushed to the customer's phone via
+    // SMS. Internal notes are staff-only and stay out of band. Fire
+    // and forget so a Twilio hiccup never blocks the note write.
+    if (parsed.data.visibility === "public") {
+      sendCustomerNote(booking, parsed.data.body).catch((err) => {
+        console.error("[notes] sendCustomerNote failed:", err);
+      });
+    }
     return NextResponse.json({ note });
   } catch (err) {
     console.error("[notes] addNote failed:", err);

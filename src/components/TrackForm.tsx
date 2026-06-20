@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Circle, Clock, Loader2, Mail } from "lucide-react";
+import { Check, Circle, Clock, Loader2, Mail, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   statusLabels,
@@ -190,6 +190,16 @@ function StatusTimeline({
   notes: BookingNote[];
 }) {
   const currentIdx = statusOrder.indexOf(booking.status);
+  // Stages staff actually moved the booking through (every toStatus in
+  // the audit log, plus the initial Booked state which may or may not
+  // be logged depending on how the booking was created). We mark a
+  // stage "done" only if it appears in this set — stages between
+  // Booked and the current stage that staff skipped (e.g. a quick
+  // service where Diagnosis/Quote/Parts didn't apply) render as
+  // "skipped" rather than falsely showing a green tick.
+  const visitedStages = new Set<string>(statusLog.map((l) => l.toStatus));
+  visitedStages.add("booked");
+  visitedStages.add(booking.status);
   return (
     <div className="card">
       <div className="flex flex-wrap items-start justify-between gap-4 mb-6 pb-6 border-b border-white/10">
@@ -223,15 +233,21 @@ function StatusTimeline({
 
       <ol className="space-y-3">
         {statusOrder.map((s, idx) => {
-          const done = idx < currentIdx;
-          const active = idx === currentIdx;
+          const active = s === booking.status;
+          const visited = visitedStages.has(s);
+          const done = visited && !active;
+          // "Skipped" — passed over by staff between Booked and the
+          // current stage. Shown as a dash so customers can see the
+          // step was deliberately bypassed, not still pending.
+          const skipped = !visited && idx < currentIdx;
           return (
             <li
               key={s}
               className={cn(
                 "flex items-center gap-4 p-3 transition-colors",
                 active && "bg-accent/5 border-l-4 border-accent",
-                done && "opacity-70"
+                done && "opacity-70",
+                skipped && "opacity-40"
               )}
             >
               <div
@@ -239,13 +255,16 @@ function StatusTimeline({
                   "w-8 h-8 rounded-full grid place-items-center flex-shrink-0",
                   done && "bg-brand-success text-white",
                   active && "bg-accent text-white animate-pulse",
-                  !done && !active && "bg-ink-800 text-white/40"
+                  skipped && "bg-ink-800 text-white/30 border border-dashed border-white/15",
+                  !done && !active && !skipped && "bg-ink-800 text-white/40"
                 )}
               >
                 {done ? (
                   <Check className="w-4 h-4" />
                 ) : active ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
+                ) : skipped ? (
+                  <Minus className="w-3 h-3" />
                 ) : (
                   <Circle className="w-3 h-3" />
                 )}
@@ -254,11 +273,15 @@ function StatusTimeline({
                 <div
                   className={cn(
                     "font-medium",
-                    active ? "text-white" : "text-white/70"
+                    active ? "text-white" : "text-white/70",
+                    skipped && "line-through text-white/40"
                   )}
                 >
                   {statusLabels[s]}
                 </div>
+                {skipped && (
+                  <div className="text-xs text-white/40 mt-0.5">Skipped</div>
+                )}
               </div>
             </li>
           );

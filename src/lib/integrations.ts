@@ -550,17 +550,74 @@ export async function notifyStaffOfNewBooking(b: Booking) {
 
 export async function sendStatusUpdate(b: Booking) {
   const label = statusLabels[b.status];
-  console.log(`[status update] ${b.reference} → ${label}`);
+  console.log(
+    `[sms:status] entry ref=${b.reference} stage=${b.status} hasAuthToken=${Boolean(process.env.TWILIO_AUTH_TOKEN)} trial=${isTrialMode()}`
+  );
+  if (!process.env.TWILIO_AUTH_TOKEN) {
+    console.log("[sms stub] Would SMS status to", b.phone, "ref", b.reference, "→", label);
+    return;
+  }
+  if (!b.phone) {
+    console.log("[sms:status] no customer phone on booking", b.reference);
+    return;
+  }
+  const normalized = toE164(b.phone);
+  // Trial mode: minimal body, no URL — Twilio trial accounts prepend
+  // "Sent from your Twilio trial account - " and AU carriers reject
+  // the combined prefix+URL with error 30007. Upgraded accounts get
+  // the full body with a track link.
+  const body = isTrialMode()
+    ? `Euro Heaven ${b.reference}: ${label}.`
+    : `Hi ${b.name.split(" ")[0]}, your Euro Heaven booking ${b.reference} is now ${label}. Track: ${siteUrlForLinks()}/track?ref=${b.reference}`;
+  try {
+    await sendViaTwilio({
+      context: "status",
+      to: normalized,
+      body,
+    });
+  } catch (err) {
+    console.error("[sms] sendStatusUpdate failed:", err);
+  }
+}
 
-  // Customer-facing SMS notifications are intentionally disabled — the
-  // workshop only contacts customers via email and the /track page they
-  // log into. The owner gets a separate SMS via notifyStaffOfNewBooking
-  // when the booking is first created; subsequent stage changes are
-  // visible at /admin without needing a push notification.
-  //
-  // If you ever want to re-enable customer "Your car is ready for
-  // pickup" SMS, restore the sendViaTwilio call below and gate on a new
-  // env var like NOTIFY_CUSTOMER_BY_SMS=true.
+/**
+ * Send a customer-visible repair note to the customer's phone. Triggered
+ * by the notes POST route when a staff member writes a note with
+ * `visibility = "public"`. Note text is truncated to keep total SMS
+ * payload under ~2 segments.
+ */
+export async function sendCustomerNote(b: Booking, note: string) {
+  console.log(
+    `[sms:note] entry ref=${b.reference} noteLen=${note.length} hasAuthToken=${Boolean(process.env.TWILIO_AUTH_TOKEN)} trial=${isTrialMode()}`
+  );
+  if (!process.env.TWILIO_AUTH_TOKEN) {
+    console.log("[sms stub] Would SMS note to", b.phone, "ref", b.reference);
+    return;
+  }
+  if (!b.phone) {
+    console.log("[sms:note] no customer phone on booking", b.reference);
+    return;
+  }
+  const normalized = toE164(b.phone);
+  // Cap note body so prefix + reference + note stay within ~2 SMS
+  // segments (160 GSM-7 / 70 UCS-2 chars per segment).
+  const trimmedNote =
+    note.length > 140 ? note.slice(0, 137).trimEnd() + "…" : note;
+  const body = isTrialMode()
+    ? `Euro Heaven ${b.reference}: ${trimmedNote}`.slice(0, 320)
+    : `Hi ${b.name.split(" ")[0]}, Euro Heaven update on ${b.reference}: ${trimmedNote} — ${siteUrlForLinks()}/track?ref=${b.reference}`.slice(
+        0,
+        320
+      );
+  try {
+    await sendViaTwilio({
+      context: "note",
+      to: normalized,
+      body,
+    });
+  } catch (err) {
+    console.error("[sms] sendCustomerNote failed:", err);
+  }
 }
 
 function siteUrlForLinks(): string {
