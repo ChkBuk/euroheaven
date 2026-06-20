@@ -34,3 +34,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code session transcripts — mirrored locally for reference but
+# never committed. They contain debug context with env-var diagnostics,
+# screenshots, and full back-and-forth that should stay private.
+docs/transcripts/

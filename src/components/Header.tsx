@@ -6,6 +6,22 @@ import { Menu, X, Phone, ArrowUpRight } from "lucide-react";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
+// Logo source — change this single line when you have a transparent
+// version of the artwork to drop into /public.
+//
+//   Current:   "/logo.jpg" — has a baked-in dark background. The
+//              header's bg-[#0a0a0a] is tuned to sit close to that
+//              tone, so the JPEG's edge fades acceptably but a faint
+//              seam may be visible on close inspection.
+//   Better:    "/logo.png" — drop a transparent-background PNG of the
+//              same artwork (just the star + EURO HEAVEN wordmark, no
+//              background panel) at /public/logo.png and update this
+//              constant. Zero seam.
+//   Best:      "/logo.svg" — a vector export of the real artwork (the
+//              existing /public/logo.svg is a placeholder shape, not
+//              the production logo; replace it before switching).
+const LOGO_SRC = "/logo.png";
+
 const nav = [
   { href: "/services", label: "Services" },
   { href: "/models", label: "Models" },
@@ -30,97 +46,86 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 transition-all duration-300 bg-chrome-900 relative",
+        // Single flat dark surface — matches the approach premium auto
+        // brands use (mercedes-benz.com, bmw.com, porsche.com all use
+        // a solid dark header rather than trying to extend a sampled
+        // logo gradient). #1d1d1d is the average of logo.jpg's eight
+        // edge sample points (PIL-sampled), so the JPEG's baked-in
+        // background blends into the surrounding surface acceptably.
+        // For a perfect zero-seam result, swap logo.jpg for a
+        // transparent-background PNG/SVG via the LOGO_SRC constant.
+        "sticky top-0 z-40 transition-all duration-300 bg-[#1d1d1d]",
         scrolled
           ? "backdrop-blur-lg border-b border-chrome-700"
           : "border-b border-transparent"
       )}
-      style={{
-        // Right zone: bg-right.png (sampled from logo.jpg's right edge)
-        // tiles across the full header. The bg.png overlay below covers
-        // it on the left so the logo seams cleanly on both sides.
-        backgroundImage: "url('/bg-right.png')",
-        backgroundSize: "auto 100%",
-        backgroundPosition: "right top",
-        backgroundRepeat: "repeat-x",
-      }}
     >
-      {/* Left zone background — bg.png covers the viewport from the left
-          edge to just past the logo image's right edge so the logo seams
-          cleanly against its left-side neighbour. Widths approximate the
-          logo's rendered right-edge x position:
-            - mobile: 16px container pad + (-16px ml) + 104.7px (h-16 × 1.635) = 104.7
-            - md:     32px container pad + (-32px ml) + 130.8px (h-20 × 1.635) = 130.8
-            - lg:     48px container pad + 0          + 130.8px               = 178.8
-          Tweak these widths if the seam ever drifts off the logo edge. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 z-0 w-[105px] md:w-[131px] lg:w-[179px]"
-        style={{
-          backgroundImage: "url('/bg.png')",
-          backgroundSize: "auto 100%",
-          backgroundPosition: "left top",
-          backgroundRepeat: "repeat-x",
-        }}
-      />
-      <div className="container relative z-10 flex items-center justify-between h-16 md:h-20">
-        <Link
-          href="/"
-          className="flex -ml-4 md:-ml-8 lg:ml-0"
-          aria-label={`${site.name} — home`}
-        >
-          <img
-            src="/logo.jpg"
-            alt={site.name}
-            className="h-16 md:h-20 w-auto block"
-          />
-          {/* Companion badge — transparent so the header's bg-right.png
-              shows through (sampled from the logo's right edge). A thin
-              left border keeps a subtle separator between the logo image
-              and the badge text. */}
-          <span className="hidden md:flex items-center justify-center h-16 md:h-20 px-5 text-[10px] uppercase tracking-[0.22em] text-chrome-300/80 leading-tight border-l border-chrome-700/40 text-center">
-            <span className="block">
-              European Vehicle
-              <br />
-              Specialists
-            </span>
-          </span>
-        </Link>
-
-        <nav className="hidden lg:flex items-center gap-7">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm text-white/70 hover:text-white transition-colors relative group"
-            >
-              {item.label}
-              <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-accent group-hover:w-full transition-all" />
-            </Link>
-          ))}
-        </nav>
-
-        <div className="hidden lg:flex items-center gap-3">
-          <a
-            href={`tel:${site.phone}`}
-            className="flex items-center gap-2 text-sm text-white/80 hover:text-white"
+      <div className="container">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          <Link
+            href="/"
+            className="flex -ml-4 md:-ml-8 lg:ml-0"
+            aria-label={`${site.name} — home`}
           >
-            <Phone className="w-4 h-4" />
-            {site.phoneDisplay}
-          </a>
-          <Link href="/book" className="btn-primary text-sm px-4 py-2.5 min-h-0">
-            Book Now <ArrowUpRight className="w-4 h-4" />
+            <img
+              src={LOGO_SRC}
+              alt={site.name}
+              className="h-16 md:h-20 w-auto block"
+            />
+            {/* 1px vertical separator between logo image and the
+                companion badge. Vertical gradient fades to transparent
+                at top and bottom so the divider doesn't read as a hard
+                edge against the surrounding background. */}
+            <span
+              aria-hidden
+              className="hidden md:block w-px self-stretch bg-gradient-to-b from-transparent via-white/35 to-transparent"
+            />
+            {/* Companion badge — transparent so the header's bg-right.png
+                shows through (sampled from the logo's right edge). */}
+            <span className="hidden md:flex items-center justify-center h-16 md:h-20 pl-3 pr-5 text-[10px] uppercase tracking-[0.22em] text-chrome-300/80 leading-tight text-center">
+              <span className="block">
+                European Vehicle
+                <br />
+                Specialists
+              </span>
+            </span>
           </Link>
-        </div>
 
-        <button
-          className="lg:hidden p-2 -mr-2 text-white"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-          aria-expanded={open}
-        >
-          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          <nav className="hidden lg:flex items-center gap-7">
+            {nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-sm text-white/70 hover:text-white transition-colors relative group"
+              >
+                {item.label}
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-accent group-hover:w-full transition-all" />
+              </Link>
+            ))}
+          </nav>
+
+          <div className="hidden lg:flex items-center gap-3">
+            <a
+              href={`tel:${site.phone}`}
+              className="flex items-center gap-2 text-sm text-white/80 hover:text-white"
+            >
+              <Phone className="w-4 h-4" />
+              {site.phoneDisplay}
+            </a>
+            <Link href="/book" className="btn-primary text-sm px-4 py-2.5 min-h-0">
+              Book Now <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <button
+            className="lg:hidden p-2 -mr-2 text-white"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+            aria-expanded={open}
+          >
+            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       <div
