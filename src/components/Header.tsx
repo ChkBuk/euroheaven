@@ -39,8 +39,11 @@ export default function Header() {
           : "border-b border-transparent"
       )}
       style={{
+        // Subtle dark gradient sits on top of bg.png so nav links stay
+        // legible without fully washing the image out. Drop the opacity
+        // further (e.g. 0.25) if you want the image to read stronger.
         backgroundImage:
-          "linear-gradient(rgba(26,26,27,0.85), rgba(26,26,27,0.85)), url('/images/bg-header.jpg')",
+          "linear-gradient(rgba(15,15,16,0.55), rgba(15,15,16,0.55)), url('/bg.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

@@ -98,7 +98,11 @@ export default function Home() {
         {/* Content overlay — top-anchored with a proper safe zone so the
             badge/headline never collide with the transparent sticky header
             regardless of viewport height. pt ≫ header height (h-16/h-20). */}
-        <div className="relative h-full container pt-36 md:pt-44 lg:pt-52 pb-8">
+        {/* pb-28 md:pb-32 reserves a clear lane at the bottom of the hero
+            for the absolute-positioned Scroll indicator (≈86px tall incl.
+            bottom-6 offset). Without it, the Google reviews row collides
+            with the mouse/Scroll badge on shorter viewports. */}
+        <div className="relative h-full container pt-36 md:pt-44 lg:pt-52 pb-8 md:pb-32">
           <div className="max-w-2xl mx-auto text-center">
             {/* Soft dark veil directly behind the text stack — keeps
                 copy readable over bright video frames without fully

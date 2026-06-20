@@ -65,7 +65,7 @@ export default function CookieConsent() {
             : "translate-y-2 opacity-0"
       )}
     >
-      <div className="max-w-3xl lg:max-w-2xl mx-auto lg:mr-[88px] bg-ink-900/95 backdrop-blur border border-white/10 rounded-2xl p-4 md:p-5 shadow-2xl flex flex-col md:flex-row gap-3 md:items-center">
+      <div className="max-w-3xl lg:max-w-2xl mr-auto bg-ink-900/95 backdrop-blur border border-white/10 rounded-[2px] p-4 md:p-5 shadow-2xl flex flex-col md:flex-row gap-3 md:items-center">
         <p className="text-sm text-white/80 leading-relaxed flex-1">
           We use functional cookies to handle bookings and form submissions.
           We don&apos;t track you across sites. See our{" "}
