@@ -30,29 +30,40 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 transition-all duration-300 bg-chrome-900",
-        // Background image lives on a pseudo-element via inline style
-        // for the most precise control across breakpoints; a chrome
-        // overlay tones it down so logo + nav labels stay legible.
+        "sticky top-0 z-40 transition-all duration-300 bg-chrome-900 relative",
         scrolled
           ? "backdrop-blur-lg border-b border-chrome-700"
           : "border-b border-transparent"
       )}
       style={{
-        // bg.png is a 680×32768 strip sampled from logo.jpg's left edge.
-        // - No tint overlay: any wash would create a seam against the logo.
-        // - background-size: auto 100% scales the image to the header
-        //   height while preserving its aspect ratio (no crop, no stretch).
-        // - background-repeat: repeat-x tiles the resulting narrow strip
-        //   horizontally, producing a continuous band that visually
-        //   matches logo.jpg's left edge across the full header width.
-        backgroundImage: "url('/bg.png')",
+        // Right zone: bg-right.png (sampled from logo.jpg's right edge)
+        // tiles across the full header. The bg.png overlay below covers
+        // it on the left so the logo seams cleanly on both sides.
+        backgroundImage: "url('/bg-right.png')",
         backgroundSize: "auto 100%",
-        backgroundPosition: "left top",
+        backgroundPosition: "right top",
         backgroundRepeat: "repeat-x",
       }}
     >
-      <div className="container flex items-center justify-between h-16 md:h-20">
+      {/* Left zone background — bg.png covers the viewport from the left
+          edge to just past the logo image's right edge so the logo seams
+          cleanly against its left-side neighbour. Widths approximate the
+          logo's rendered right-edge x position:
+            - mobile: 16px container pad + (-16px ml) + 104.7px (h-16 × 1.635) = 104.7
+            - md:     32px container pad + (-32px ml) + 130.8px (h-20 × 1.635) = 130.8
+            - lg:     48px container pad + 0          + 130.8px               = 178.8
+          Tweak these widths if the seam ever drifts off the logo edge. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-0 z-0 w-[105px] md:w-[131px] lg:w-[179px]"
+        style={{
+          backgroundImage: "url('/bg.png')",
+          backgroundSize: "auto 100%",
+          backgroundPosition: "left top",
+          backgroundRepeat: "repeat-x",
+        }}
+      />
+      <div className="container relative z-10 flex items-center justify-between h-16 md:h-20">
         <Link
           href="/"
           className="flex -ml-4 md:-ml-8 lg:ml-0"
@@ -63,11 +74,11 @@ export default function Header() {
             alt={site.name}
             className="h-16 md:h-20 w-auto block"
           />
-          {/* Companion badge — uses the chrome palette's slightly lighter
-              tone (chrome-800) so it reads as a sibling of the logo, not
-              a pasted-on slab. Text is centred horizontally within the
-              badge. */}
-          <span className="hidden md:flex items-center justify-center h-16 md:h-20 bg-chrome-800 px-5 text-[10px] uppercase tracking-[0.22em] text-chrome-300/80 leading-tight border-l border-chrome-700 text-center">
+          {/* Companion badge — transparent so the header's bg-right.png
+              shows through (sampled from the logo's right edge). A thin
+              left border keeps a subtle separator between the logo image
+              and the badge text. */}
+          <span className="hidden md:flex items-center justify-center h-16 md:h-20 px-5 text-[10px] uppercase tracking-[0.22em] text-chrome-300/80 leading-tight border-l border-chrome-700/40 text-center">
             <span className="block">
               European Vehicle
               <br />
