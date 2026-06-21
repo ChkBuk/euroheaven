@@ -119,7 +119,12 @@ export default function FloatingChat() {
     <>
       <AIAssistant open={aiOpen} onClose={() => setAiOpen(false)} />
 
-      <div className="fixed right-4 md:right-6 bottom-20 lg:bottom-6 z-40 flex flex-col items-end gap-3">
+      {/* Mobile: bottom-20 keeps the FAB clear of the MobileCTA bar.
+          Desktop (lg+): bottom-24 lifts the FAB above the footer's
+          bottom strip so it cannot intercept clicks on Privacy /
+          Terms / Staff Login when the user is scrolled all the way
+          down. */}
+      <div className="fixed right-4 md:right-6 bottom-20 lg:bottom-24 z-40 flex flex-col items-end gap-3">
         <div
           className={cn(
             "flex flex-col items-end gap-3 transition-all duration-300",
