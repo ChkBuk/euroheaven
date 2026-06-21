@@ -14,9 +14,18 @@ const supabaseConfigured = () =>
 
 /**
  * Returns the status log + booking notes for a booking.
- * - Staff see everything (public + internal notes).
- * - The booking's owner (matched by email) sees only public notes.
- * - In dev without Supabase, returns the in-memory data without auth.
+ *
+ * Auth model — the booking reference acts as a shared secret (same as
+ * /api/bookings/[ref], which is already public):
+ *   - Anyone with a valid ref sees the booking + the status log + any
+ *     customer-visible (public) notes. This is needed so a customer can
+ *     hit /track from any device without signing in and still see the
+ *     full stage history of their repair.
+ *   - Staff additionally see internal-only notes.
+ *   - Staff email addresses (changed_by_email / created_by_email) are
+ *     stripped for non-staff viewers so we don't leak technician
+ *     identities to customers.
+ *   - In dev without Supabase, returns everything (in-memory data).
  */
 export async function GET(
   _req: Request,
@@ -38,15 +47,20 @@ export async function GET(
   const session = await getSession();
   const staff = session ? await isStaff(session.email) : false;
 
-  // Customer can only view their own booking's timeline.
-  const owner =
-    !!session &&
-    session.email.toLowerCase() === booking.email.toLowerCase();
+  const timeline = await db.listTimeline(ref, { publicOnly: !staff });
 
-  if (!staff && !owner) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  if (!staff) {
+    // Strip staff identifiers — customers shouldn't see which
+    // technician made each change.
+    timeline.statusLog = timeline.statusLog.map((l) => ({
+      ...l,
+      changedByEmail: null,
+    }));
+    timeline.notes = timeline.notes.map((n) => ({
+      ...n,
+      createdByEmail: null,
+    }));
   }
 
-  const timeline = await db.listTimeline(ref, { publicOnly: !staff });
   return NextResponse.json({ booking, ...timeline });
 }
