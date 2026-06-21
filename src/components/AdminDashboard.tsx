@@ -7,7 +7,12 @@ import { statusLabels, statusOrder, type Booking, type RepairStatus } from "@/li
 import { cn } from "@/lib/utils";
 
 type DateFilter = "all" | "today" | "week" | "month" | "custom";
-type SortBy = "date_desc" | "date_asc" | "ref_desc" | "status";
+type SortBy =
+  | "created_desc"
+  | "created_asc"
+  | "appointment_asc"
+  | "appointment_desc"
+  | "status";
 
 export default function AdminDashboard() {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -20,7 +25,7 @@ export default function AdminDashboard() {
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [customFrom, setCustomFrom] = useState("");
   const [customTo, setCustomTo] = useState("");
-  const [sortBy, setSortBy] = useState<SortBy>("date_desc");
+  const [sortBy, setSortBy] = useState<SortBy>("created_desc");
 
   // Stage-change confirmation. Same gating pattern as BookingDetail —
   // clicking a stage pill stores the intended change here; the PATCH
@@ -84,7 +89,10 @@ export default function AdminDashboard() {
       );
     }
 
-    // Date filtering against the appointment date (b.date).
+    // Date filtering against the booking creation time (b.createdAt).
+    // Filtering by appointment date was misleading — admins ask "what
+    // bookings came in today" more often than "whose car is scheduled
+    // today", and this matches the dropdown labels' implied meaning.
     if (dateFilter !== "all") {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -117,7 +125,7 @@ export default function AdminDashboard() {
 
       if (from || to) {
         result = result.filter((b) => {
-          const d = new Date(b.date);
+          const d = new Date(b.createdAt);
           if (from && d < from) return false;
           if (to && d > to) return false;
           return true;
@@ -126,20 +134,33 @@ export default function AdminDashboard() {
     }
 
     // Sort — copy first so we don't mutate the source array.
+    // "Newest first" now means newest booking *submission* (createdAt),
+    // which matches the admin's mental model. Appointment-date sorts
+    // are kept as explicit "Soonest / Furthest appointment" options for
+    // anyone scheduling their day around upcoming jobs.
     result = [...result];
     switch (sortBy) {
-      case "date_desc":
+      case "created_desc":
         result.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         break;
-      case "date_asc":
+      case "created_asc":
+        result.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        break;
+      case "appointment_asc":
         result.sort(
           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         );
         break;
-      case "ref_desc":
-        result.sort((a, b) => b.reference.localeCompare(a.reference));
+      case "appointment_desc":
+        result.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
         break;
       case "status":
         result.sort(
@@ -155,14 +176,14 @@ export default function AdminDashboard() {
   const filtersActive =
     searchQ.trim().length > 0 ||
     dateFilter !== "all" ||
-    sortBy !== "date_desc";
+    sortBy !== "created_desc";
 
   function clearFilters() {
     setSearchQ("");
     setDateFilter("all");
     setCustomFrom("");
     setCustomTo("");
-    setSortBy("date_desc");
+    setSortBy("created_desc");
   }
 
   if (loading)
@@ -211,10 +232,10 @@ export default function AdminDashboard() {
             className="field-input md:col-span-3"
             aria-label="Filter by date"
           >
-            <option value="all">All dates</option>
-            <option value="today">Today</option>
-            <option value="week">This week</option>
-            <option value="month">This month</option>
+            <option value="all">All bookings</option>
+            <option value="today">Booked today</option>
+            <option value="week">Booked this week</option>
+            <option value="month">Booked this month</option>
             <option value="custom">Custom range…</option>
           </select>
           <select
@@ -223,9 +244,14 @@ export default function AdminDashboard() {
             className="field-input md:col-span-4"
             aria-label="Sort bookings"
           >
-            <option value="date_desc">Sort: Newest appointment first</option>
-            <option value="date_asc">Sort: Oldest appointment first</option>
-            <option value="ref_desc">Sort: Reference (newest #)</option>
+            <option value="created_desc">Sort: Newest booking first</option>
+            <option value="created_asc">Sort: Oldest booking first</option>
+            <option value="appointment_asc">
+              Sort: Soonest appointment first
+            </option>
+            <option value="appointment_desc">
+              Sort: Furthest appointment first
+            </option>
             <option value="status">Sort: Stage</option>
           </select>
         </div>
