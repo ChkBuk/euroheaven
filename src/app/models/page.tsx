@@ -3,17 +3,46 @@ import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
 import { modelGroups } from "@/lib/models";
 import Reveal from "@/components/Reveal";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Mercedes-Benz Models We Service",
   description:
     "A-Class to S-Class, AMG, EQ Electric, Sprinter & Vito vans, and classic models. We service every Mercedes-Benz in Melbourne.",
   alternates: { canonical: "/models" },
+  openGraph: {
+    title: "Mercedes-Benz Models We Service",
+    description:
+      "A-Class to S-Class, AMG, EQ Electric, Sprinter & Vito vans, and classic models. We service every Mercedes-Benz in Melbourne.",
+    url: `${site.url}/models`,
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
+};
+
+// ItemList JSON-LD so each model group is discoverable as a catalogue
+// entry; useful when Google generates sitelinks for "Mercedes models"
+// queries.
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Mercedes-Benz Models Serviced",
+  itemListElement: modelGroups.flatMap((g, gi) =>
+    g.models.map((m, mi) => ({
+      "@type": "ListItem",
+      position: gi * 100 + mi + 1,
+      name: m,
+    }))
+  ),
 };
 
 export default function ModelsPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
       <section className="relative bg-ink-950 pt-20 md:pt-28 pb-16 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-accent/10 blur-3xl rounded-full" aria-hidden />
         <div className="container relative">

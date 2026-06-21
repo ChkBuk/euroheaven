@@ -33,10 +33,18 @@ export async function generateMetadata({
   const { suburb } = await params;
   const s = getSuburb(suburb);
   if (!s) return { title: "Not found" };
+  const desc = `Mercedes-Benz specialist servicing and repairs for ${s.name} owners. Genuine parts, factory diagnostics, fully warranty compliant.`;
   return {
     title: `Mercedes-Benz Service ${s.name}`,
-    description: `Mercedes-Benz specialist servicing and repairs for ${s.name} owners. Genuine parts, factory diagnostics, fully warranty compliant.`,
+    description: desc,
     alternates: { canonical: `/mercedes-service/${s.slug}` },
+    openGraph: {
+      title: `Mercedes-Benz Service ${s.name}`,
+      description: desc,
+      url: `${site.url}/mercedes-service/${s.slug}`,
+      type: "website",
+      images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    },
   };
 }
 
@@ -49,8 +57,46 @@ export default async function SuburbPage({
   const s = getSuburb(suburb);
   if (!s) notFound();
 
+  // Per-suburb AutoRepair (LocalBusiness) JSON-LD with areaServed bound
+  // to this suburb. This is the highest-impact local-SEO change for
+  // these landing pages — Google can now associate the business with
+  // each suburb name as a recognised service area, helping rank for
+  // "Mercedes mechanic <suburb>" queries.
+  const suburbBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "AutoRepair",
+    "@id": `${site.url}/mercedes-service/${s.slug}#business`,
+    name: `${site.name} — Mercedes-Benz Service ${s.name}`,
+    description: `Mercedes-Benz specialist servicing and repairs for ${s.name} owners.`,
+    url: `${site.url}/mercedes-service/${s.slug}`,
+    telephone: site.phone,
+    email: site.email,
+    image: `${site.url}/og-image.jpg`,
+    logo: `${site.url}/logo.png`,
+    priceRange: "$$",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: site.address.street,
+      addressLocality: site.address.suburb,
+      addressRegion: site.address.state,
+      postalCode: site.address.postcode,
+      addressCountry: "AU",
+    },
+    areaServed: {
+      "@type": "City",
+      name: `${s.name}, Victoria, Australia`,
+    },
+    parentOrganization: { "@id": `${site.url}#organization` },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(suburbBusinessSchema),
+        }}
+      />
       <BreadcrumbJsonLd
         items={[
           {

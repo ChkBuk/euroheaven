@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   title: "Contact Us",
   description: `Contact ${site.name}, Mercedes-Benz specialists in Melbourne. Call ${site.phoneDisplay} or book online.`,
   alternates: { canonical: "/contact" },
+  openGraph: {
+    title: `Contact ${site.name}`,
+    description: `Mercedes-Benz specialists in Melbourne. Call ${site.phoneDisplay} or book online.`,
+    url: `${site.url}/contact`,
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
 };
 
 export default function ContactPage() {

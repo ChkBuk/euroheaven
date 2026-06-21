@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import { services } from "@/lib/services";
 import { img } from "@/lib/images";
 import Reveal from "@/components/Reveal";
+import { site } from "@/lib/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,11 +12,37 @@ export const metadata: Metadata = {
   description:
     "Full Mercedes-Benz servicing and repairs in Melbourne — logbook service, brakes, transmission, diagnostics, AC, pre-purchase inspections.",
   alternates: { canonical: "/services" },
+  openGraph: {
+    title: "Mercedes-Benz Services Melbourne",
+    description:
+      "Full Mercedes-Benz servicing and repairs in Melbourne — logbook service, brakes, transmission, diagnostics, AC, pre-purchase inspections.",
+    url: `${site.url}/services`,
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
+};
+
+// ItemList JSON-LD so Google can identify this page as a catalogue and
+// surface individual services in rich results / sitelinks.
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Mercedes-Benz Services Melbourne",
+  itemListElement: services.map((s, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: s.title,
+    url: `${site.url}/services/${s.slug}`,
+  })),
 };
 
 export default function ServicesPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
       <section className="relative bg-ink-950 pt-20 md:pt-28 pb-16 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-accent/10 blur-3xl rounded-full" aria-hidden />
         <div className="container relative">

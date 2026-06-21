@@ -5,10 +5,17 @@ import { checkRateLimit } from "@/lib/rate-limit";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name is too short").max(120),
+  // Phone — accept whatever the user types and verify only that there
+  // are at least 8 digits hiding inside it. Matches the looser rule
+  // we use in the booking wizard; the strict regex was rejecting
+  // legitimate AU numbers with dots, em-dashes, or other separators.
   phone: z
     .string()
-    .regex(/^[+]?[\d\s()-]{8,}$/, "Enter a valid phone number")
-    .max(40),
+    .max(40)
+    .refine(
+      (v) => (v.match(/\d/g) ?? []).length >= 8,
+      "Enter a valid phone number"
+    ),
   email: z.string().email("Enter a valid email").max(200),
   subject: z.string().max(200).optional(),
   message: z.string().min(5, "Message is too short").max(5000),

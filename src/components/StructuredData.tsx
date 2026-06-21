@@ -44,11 +44,11 @@ export default function StructuredData() {
       "@type": "State",
       name: "Victoria, Australia",
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: site.stats.googleRating.toString(),
-      reviewCount: site.stats.googleReviewCount.toString(),
-    },
+    // NOTE: aggregateRating intentionally omitted. Google's structured
+    // data guidelines require ratings to reflect actual customer
+    // reviews from the source page; emitting placeholder numbers risks
+    // a manual action. Restore once you can pull live ratings from the
+    // Google Places API or the on-page Reviews component.
     makesOffer: {
       "@type": "Offer",
       itemOffered: {

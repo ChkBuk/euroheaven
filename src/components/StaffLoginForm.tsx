@@ -1,73 +1,65 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Loader2, Mail } from "lucide-react";
+import { AlertCircle, Loader2, Lock, Mail } from "lucide-react";
 
 export default function StaffLoginForm({ nextPath }: { nextPath: string }) {
-  const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (submitting) return;
     const fd = new FormData(e.currentTarget);
     setSubmitting(true);
+    setError(null);
     try {
-      await fetch("/api/auth/magic-link", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: fd.get("email"),
+          password: fd.get("password"),
           next: nextPath,
         }),
       });
+      if (res.ok) {
+        const body = await res.json();
+        // Full navigation (not router.push) so the new auth cookie is
+        // picked up by the layout's server-side getSession() check.
+        window.location.href = body.redirectTo || nextPath || "/admin";
+        return;
+      }
+      // Map server errors to friendly messages without disclosing
+      // whether the email exists.
+      let msg = "Sign-in failed. Please try again.";
+      try {
+        const body = await res.json();
+        if (body?.error === "invalid_credentials") {
+          msg = "Email or password is incorrect.";
+        } else if (body?.error === "not_staff") {
+          msg =
+            "This account isn't authorised for the workshop admin. Contact the site owner.";
+        } else if (body?.error === "rate_limited") {
+          msg = "Too many attempts. Please wait a few minutes and try again.";
+        } else if (Array.isArray(body?.issues) && body.issues.length > 0) {
+          msg = body.issues[0].message ?? msg;
+        }
+      } catch {
+        /* response wasn't JSON — keep the generic message */
+      }
+      setError(msg);
     } catch {
-      /* ignore — UI still shows "sent" so we don't leak whether the
-         email exists. */
+      setError("Network error — please check your connection and try again.");
     } finally {
       setSubmitting(false);
-      setSent(true);
     }
-  }
-
-  if (sent) {
-    return (
-      <div
-        className="card bg-ink-800 border-brand-success/30"
-        style={{ touchAction: "manipulation" }}
-      >
-        <div className="flex items-start gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-brand-success/15 grid place-items-center text-brand-success flex-shrink-0">
-            <Check className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="font-semibold text-white text-base">
-              Check your inbox
-            </h2>
-            <p className="text-sm text-white/65 mt-1">
-              We&apos;ve sent a sign-in link to the email you entered. Open
-              the email on this device and tap the link — you&apos;ll land
-              at <code className="text-white">{nextPath}</code> straight
-              away.
-            </p>
-          </div>
-        </div>
-        <ul className="text-xs text-white/50 space-y-1 ml-13 list-disc list-inside">
-          <li>The link works once and expires in 1 hour.</li>
-          <li>
-            Can&apos;t see the email? Check your spam folder — first emails
-            from a new sender sometimes land there.
-          </li>
-          <li>Wrong email? Refresh this page to try again.</li>
-        </ul>
-      </div>
-    );
   }
 
   return (
     <form
       onSubmit={onSubmit}
-      className="card bg-ink-800"
+      className="card bg-ink-800 space-y-4"
       style={{ touchAction: "manipulation" }}
     >
       <label className="block">
@@ -86,19 +78,50 @@ export default function StaffLoginForm({ nextPath }: { nextPath: string }) {
           className="field-input"
         />
       </label>
+
+      <label className="block">
+        <span className="flex items-center gap-2 text-sm font-medium text-white mb-2">
+          <Lock className="w-4 h-4 text-accent" />
+          Password
+        </span>
+        <input
+          name="password"
+          type="password"
+          required
+          autoComplete="current-password"
+          minLength={1}
+          className="field-input"
+        />
+      </label>
+
+      {error && (
+        <div
+          role="alert"
+          className="flex items-start gap-2 p-3 rounded-lg border border-accent/40 bg-accent/10 text-sm text-white/90"
+        >
+          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-accent" />
+          <span>{error}</span>
+        </div>
+      )}
+
       <button
         type="submit"
         disabled={submitting}
-        className="btn-primary w-full mt-5 disabled:opacity-60"
+        className="btn-primary w-full disabled:opacity-60"
       >
         {submitting ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" /> Sending link…
+            <Loader2 className="w-4 h-4 animate-spin" /> Signing in…
           </>
         ) : (
-          "Send Sign-In Link"
+          "Sign in"
         )}
       </button>
+
+      <p className="text-xs text-white/45 text-center">
+        Passwords are set per-staff in the Supabase dashboard. Forgot yours?
+        Ask the site owner to reset it.
+      </p>
     </form>
   );
 }

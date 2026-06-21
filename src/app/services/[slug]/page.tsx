@@ -29,6 +29,13 @@ export async function generateMetadata({
     title: `${service.title} Melbourne`,
     description: service.description,
     alternates: { canonical: `/services/${service.slug}` },
+    openGraph: {
+      title: `${service.title} Melbourne`,
+      description: service.description,
+      url: `${site.url}/services/${service.slug}`,
+      type: "website",
+      images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    },
   };
 }
 

@@ -5,6 +5,7 @@ import { Clock, ChevronLeft, ArrowUpRight } from "lucide-react";
 import { posts, getPost } from "@/lib/blog";
 import Reveal from "@/components/Reveal";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
+import { site } from "@/lib/site";
 
 export function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
@@ -24,6 +25,14 @@ export async function generateMetadata({
     title: p.title,
     description: p.excerpt,
     alternates: { canonical: `/blog/${p.slug}` },
+    openGraph: {
+      title: p.title,
+      description: p.excerpt,
+      url: `${site.url}/blog/${p.slug}`,
+      type: "article",
+      publishedTime: p.date,
+      images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+    },
   };
 }
 
@@ -32,8 +41,27 @@ export default async function BlogPost({ params }: { params: RouteParams }) {
   const p = getPost(slug);
   if (!p) notFound();
 
+  // BlogPosting JSON-LD — unlocks Google's article rich results and
+  // makes the post eligible for Top Stories / Discover surfaces.
+  const blogPostingSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: p.title,
+    description: p.excerpt,
+    datePublished: p.date,
+    dateModified: p.date,
+    author: { "@type": "Organization", name: site.name, url: site.url },
+    publisher: { "@id": `${site.url}#organization` },
+    mainEntityOfPage: `${site.url}/blog/${p.slug}`,
+    image: `${site.url}/og-image.jpg`,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+      />
       <BreadcrumbJsonLd
         items={[
           { name: "Blog", path: "/blog" },

@@ -1,23 +1,54 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 export default function ContactForm() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const data = Object.fromEntries(new FormData(e.currentTarget));
-    await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    setLoading(false);
-    setSent(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        // Surface the first Zod issue (or a generic fallback for
+        // 429/500). Keeps the failed form state visible so the user
+        // can correct the field and retry instead of seeing a false
+        // "Message sent".
+        let detail = "";
+        try {
+          const body = await res.json();
+          if (Array.isArray(body?.issues) && body.issues.length > 0) {
+            detail = body.issues[0].message ?? "";
+          } else if (body?.error === "rate_limited") {
+            detail = "Too many attempts. Please wait a minute and try again.";
+          }
+        } catch {
+          /* response wasn't JSON — fall through to generic message */
+        }
+        setError(
+          detail ||
+            `We couldn't send your message (HTTP ${res.status}). Please try again or call us.`
+        );
+        return;
+      }
+      setSent(true);
+    } catch {
+      setError(
+        "Network error — please check your connection and try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (sent) {
@@ -51,6 +82,15 @@ export default function ContactForm() {
           className="field-input"
         />
       </div>
+      {error && (
+        <div
+          role="alert"
+          className="flex items-start gap-2 p-3 rounded-lg border border-accent/40 bg-accent/10 text-sm text-white/90"
+        >
+          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-accent" />
+          <span>{error}</span>
+        </div>
+      )}
       <button type="submit" disabled={loading} className="btn-primary w-full">
         {loading ? "Sending..." : "Send Message"}
       </button>

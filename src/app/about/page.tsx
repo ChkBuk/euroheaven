@@ -11,6 +11,13 @@ export const metadata: Metadata = {
   title: "About Us — Mercedes-Benz Specialists Melbourne",
   description: `${site.stats.yearsInBusiness}+ years of Mercedes-Benz expertise in Melbourne. VACC-accredited, factory-trained technicians serving all of Victoria.`,
   alternates: { canonical: "/about" },
+  openGraph: {
+    title: `About ${site.name} — Mercedes-Benz Specialists Melbourne`,
+    description: `${site.stats.yearsInBusiness}+ years of Mercedes-Benz expertise in Melbourne. VACC-accredited, factory-trained technicians.`,
+    url: `${site.url}/about`,
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
 };
 
 export default function AboutPage() {

@@ -22,6 +22,18 @@ export default function AdminDashboard() {
   const [customTo, setCustomTo] = useState("");
   const [sortBy, setSortBy] = useState<SortBy>("date_desc");
 
+  // Stage-change confirmation. Same gating pattern as BookingDetail —
+  // clicking a stage pill stores the intended change here; the PATCH
+  // only fires after the staff member confirms via the dialog. Prevents
+  // accidental mass-stage-changes when scrolling through the list view
+  // and tapping a pill by mistake.
+  const [pendingChange, setPendingChange] = useState<{
+    ref: string;
+    currentStatus: RepairStatus;
+    nextStatus: RepairStatus;
+  } | null>(null);
+  const [saving, setSaving] = useState(false);
+
   const load = useCallback(async () => {
     setLoading(true);
     const res = await fetch("/api/bookings", { cache: "no-store" });
@@ -34,13 +46,28 @@ export default function AdminDashboard() {
     load();
   }, [load]);
 
+  // Dismiss the confirmation dialog with the Escape key.
+  useEffect(() => {
+    if (!pendingChange) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !saving) setPendingChange(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [pendingChange, saving]);
+
   async function updateStatus(ref: string, status: RepairStatus) {
-    await fetch(`/api/bookings/${ref}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    await load();
+    setSaving(true);
+    try {
+      await fetch(`/api/bookings/${ref}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      await load();
+    } finally {
+      setSaving(false);
+    }
   }
 
   const filteredBookings = useMemo(() => {
@@ -311,11 +338,18 @@ export default function AdminDashboard() {
               {statusOrder.map((s) => (
                 <button
                   key={s}
-                  onClick={() => updateStatus(b.reference, s)}
+                  disabled={saving || b.status === s}
+                  onClick={() =>
+                    setPendingChange({
+                      ref: b.reference,
+                      currentStatus: b.status,
+                      nextStatus: s,
+                    })
+                  }
                   className={cn(
-                    "px-3 py-1 rounded-full text-xs border transition-colors",
+                    "px-3 py-1 rounded-full text-xs border transition-colors disabled:opacity-50",
                     b.status === s
-                      ? "bg-accent text-white border-accent"
+                      ? "bg-accent text-white border-accent cursor-default"
                       : "bg-ink-900 border-white/10 text-white/70 hover:border-white/25"
                   )}
                 >
@@ -333,6 +367,62 @@ export default function AdminDashboard() {
           </div>
         ))}
       </div>
+      )}
+
+      {/* Confirmation dialog — gates every stage change initiated from
+          the list view. Same UX as BookingDetail's dialog so the two
+          places staff can update a stage behave identically. */}
+      {pendingChange && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="admin-stage-confirm-title"
+          className="fixed inset-0 z-50 grid place-items-center bg-black/65 backdrop-blur-sm p-4"
+          onClick={() => !saving && setPendingChange(null)}
+        >
+          <div
+            className="card-dark max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3
+              id="admin-stage-confirm-title"
+              className="font-semibold text-lg mb-3"
+            >
+              Update repair stage?
+            </h3>
+            <p className="text-sm text-white/75 mb-2">
+              Change <strong>{pendingChange.ref}</strong> from{" "}
+              <strong>{statusLabels[pendingChange.currentStatus]}</strong> to{" "}
+              <strong>{statusLabels[pendingChange.nextStatus]}</strong>?
+            </p>
+            <p className="text-xs text-white/40 mb-5">
+              The customer&apos;s tracking page updates within a few seconds,
+              and a customer SMS will be sent if Twilio is configured.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => setPendingChange(null)}
+                disabled={saving}
+                className="btn-ghost text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={async () => {
+                  const change = pendingChange;
+                  setPendingChange(null);
+                  await updateStatus(change.ref, change.nextStatus);
+                }}
+                className="btn-primary text-sm disabled:opacity-50"
+              >
+                {saving ? "Updating…" : "Update stage"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
