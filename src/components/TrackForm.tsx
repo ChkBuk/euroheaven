@@ -30,18 +30,33 @@ export default function TrackForm({ initialRef }: { initialRef?: string }) {
   // Refetch the timeline every 5 seconds while a booking is displayed
   // (simulates realtime — replace with Supabase Realtime subscription when
   // we wire that up in a later phase).
+  //
+  // Hardened against mobile/background-tab quirks:
+  //   - The fetch is wrapped in try/catch so transient network errors
+  //     (which fire on mobile when the tab backgrounds or wifi flakes)
+  //     don't become unhandled promise rejections that Sentry then
+  //     captures as a flood of duplicate errors.
+  //   - Polling skips when document.visibilityState !== "visible" so we
+  //     don't waste cycles (or trigger more fetch errors) while hidden.
   useEffect(() => {
     if (!booking) return;
     const fetchTimeline = async () => {
-      const res = await fetch(
-        `/api/bookings/${booking.reference}/timeline`,
-        { cache: "no-store" }
-      );
-      if (res.ok) {
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") {
+        return;
+      }
+      try {
+        const res = await fetch(
+          `/api/bookings/${booking.reference}/timeline`,
+          { cache: "no-store" }
+        );
+        if (!res.ok) return;
         const data = await res.json();
         if (data.booking) setBooking(data.booking);
         if (data.statusLog) setStatusLog(data.statusLog);
         if (data.notes) setNotes(data.notes);
+      } catch {
+        // Network blip — backgrounded tab, dropped wifi, etc. Next
+        // 5s tick will retry; no user-facing error needed.
       }
     };
     const id = setInterval(fetchTimeline, 5000);
@@ -53,43 +68,56 @@ export default function TrackForm({ initialRef }: { initialRef?: string }) {
     if (!r) return;
     setLoading(true);
     setError(null);
-    // Try the timeline endpoint first — it returns booking + status log
-    // + public notes in one round-trip.
-    const tlRes = await fetch(`/api/bookings/${r}/timeline`, {
-      cache: "no-store",
-    });
-    if (tlRes.ok) {
-      const data = await tlRes.json();
-      setBooking(data.booking);
-      setStatusLog(data.statusLog ?? []);
-      setNotes(data.notes ?? []);
+    try {
+      // Try the timeline endpoint first — it returns booking + status log
+      // + public notes in one round-trip.
+      const tlRes = await fetch(`/api/bookings/${r}/timeline`, {
+        cache: "no-store",
+      });
+      if (tlRes.ok) {
+        const data = await tlRes.json();
+        setBooking(data.booking);
+        setStatusLog(data.statusLog ?? []);
+        setNotes(data.notes ?? []);
+        setLoading(false);
+        return;
+      }
+      // Fallback for older deployments / 403 (not signed in): fetch booking only.
+      const res = await fetch(`/api/bookings/${r}`);
       setLoading(false);
-      return;
-    }
-    // Fallback for older deployments / 403 (not signed in): fetch booking only.
-    const res = await fetch(`/api/bookings/${r}`);
-    setLoading(false);
-    if (!res.ok) {
-      setError("We couldn't find that booking. Check your reference.");
-      setBooking(null);
+      if (!res.ok) {
+        setError("We couldn't find that booking. Check your reference.");
+        setBooking(null);
+        setStatusLog([]);
+        setNotes([]);
+        return;
+      }
+      const data = await res.json();
+      setBooking(data.booking);
       setStatusLog([]);
       setNotes([]);
-      return;
+    } catch {
+      setLoading(false);
+      setError(
+        "Couldn't reach the server. Please check your connection and try again."
+      );
     }
-    const data = await res.json();
-    setBooking(data.booking);
-    setStatusLog([]);
-    setNotes([]);
   }
 
   async function sendMagicLink(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    await fetch("/api/auth/magic-link", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: fd.get("email") }),
-    });
+    try {
+      await fetch("/api/auth/magic-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: fd.get("email") }),
+      });
+    } catch {
+      // Show the "check your inbox" state either way — we don't leak
+      // whether the email exists, and a retry is one tap away if the
+      // network was genuinely down.
+    }
     setMagicSent(true);
   }
 

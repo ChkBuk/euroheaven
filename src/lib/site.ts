@@ -21,9 +21,9 @@ export const site = {
   ],
   abn: "20 657 028 585",
   social: {
-    facebook: "https://facebook.com/euroheaven",
-    instagram: "https://instagram.com/euroheaven",
-    google: "https://g.page/euroheaven",
+    facebook: "https://www.facebook.com/profile.php?id=61590991658344",
+    instagram: "https://www.instagram.com/euroheavenptyltd/",
+    google: "https://share.google/8eu23suw0CSQdjfH6",
   },
   stats: {
     yearsInBusiness: 4,
