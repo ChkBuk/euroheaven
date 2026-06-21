@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<title>Invoice HEX260001 — Hexfield Pty Ltd</title>
+<style>
+  :root {
+    --ink: #0F1014;
+    --muted: #606060;
+    --rule: #d4d4d4;
+    --soft: #f7f7f7;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font: 12.5px/1.5 "Roboto", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+  p, .desc-detail, .pay-card p, .billing .addr { text-align: justify; }
+  h1, h3, .invoice-meta, table.lines th, .pay-card h3, .desc-title,
+  .doc-footer, .totals { text-align: left; }
+  table.lines td.num, table.lines th.num, .totals td { text-align: right; }
+  .sheet {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 40px 20px;
+  }
+
+  /* Masthead */
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+  }
+  .masthead-left img { width: 220px; height: auto; display: block; }
+  .masthead-left .from {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.45;
+  }
+  .masthead-right {
+    text-align: right;
+  }
+  .masthead-right h1 {
+    font-size: 28px;
+    margin: 0 0 6px;
+    letter-spacing: 3px;
+    font-weight: 800;
+  }
+  .invoice-meta {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .invoice-meta .row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .invoice-meta .label {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 11px;
+  }
+  .invoice-meta .value {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    min-width: 140px;
+    text-align: right;
+  }
+
+  /* Two-column billing */
+  .billing {
+    display: flex;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+  .billing > div { flex: 1; }
+  .billing h3 {
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .billing .name {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+  .billing .addr { font-size: 13px; line-height: 1.5; color: var(--ink); }
+  .billing .addr a { color: var(--ink); text-decoration: none; }
+
+  /* Line items */
+  table.lines {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+  }
+  table.lines thead th {
+    background: var(--ink);
+    color: #fff;
+    padding: 9px 12px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+  table.lines thead th.num { text-align: right; }
+  table.lines tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  table.lines .desc-detail { font-size: 11.5px; line-height: 1.45; }
+  table.lines tbody td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  table.lines .desc-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  table.lines .desc-detail {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* Totals */
+  .totals {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .totals table {
+    border-collapse: collapse;
+    min-width: 320px;
+  }
+  .totals td {
+    padding: 8px 14px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .totals .label {
+    text-align: left;
+    color: var(--muted);
+  }
+  .totals .grand td {
+    background: var(--ink);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 11px 14px;
+  }
+  .totals .grand .label {
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 12px;
+  }
+
+  /* Pay block + notes — must stay on the same page. */
+  .pay {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .pay-card {
+    background: var(--soft);
+    padding: 16px 18px;
+    border-left: 3px solid var(--ink);
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .pay-card h3 {
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .pay-card dl { margin: 0; font-size: 13px; }
+  .pay-card dt { font-weight: 600; margin-top: 6px; }
+  .pay-card dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .pay-card p { margin: 6px 0 0; font-size: 13px; line-height: 1.5; }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+    page-break-inside: avoid;
+  }
+  /* Force the whole sheet onto a single page when printing. */
+  @media print {
+    .sheet { page-break-after: avoid; }
+  }
+
+  @page { size: A4; margin: 10mm 12mm; }
+  @media print {
+    .sheet { padding: 0; }
+    body { font-size: 12.5px; line-height: 1.5; }
+    .masthead-right h1 { font-size: 28px; }
+    .masthead-left img { width: 220px; }
+    table.lines td { padding: 10px; }
+    table.lines thead th { padding: 10px; }
+    .desc-detail { font-size: 11.5px; line-height: 1.45; }
+    .totals .grand td { padding: 12px; font-size: 16px; }
+    .pay-card { padding: 12px 14px; }
+    .pay-card dl { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+  <header class="masthead">
+    <div class="masthead-left">
+      <img src="assets/logo.svg" alt="Hexfield">
+      <div class="from">
+        Software studio · Bespoke web applications<br>
+        www.hexfield.com.au
+      </div>
+    </div>
+    <div class="masthead-right">
+      <h1>INVOICE</h1>
+      <div class="invoice-meta">
+        <div class="row"><span class="label">Invoice #</span><span class="value">HEX260001</span></div>
+        <div class="row"><span class="label">Issue date</span><span class="value">22 Jun 2026</span></div>
+        <div class="row"><span class="label">Due date</span><span class="value">29 Jun 2026</span></div>
+        <div class="row"><span class="label">Terms</span><span class="value">Net 7</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="billing">
+    <div>
+      <h3>Billed to</h3>
+      <div class="name">Euro Heaven</div>
+      <div class="addr">
+        27 Podmore Street<br>
+        Dandenong VIC 3175<br>
+        Australia<br>
+        <br>
+        info@euroheaven.com.au<br>
+        400 115 765
+      </div>
+    </div>
+    <div>
+      <h3>From</h3>
+      <div class="name">Hexfield Pty Ltd</div>
+      <div class="addr">
+        ABN 55 698 151 638<br>
+        Adelaide, South Australia<br>
+        Australia<br>
+        <br>
+        info@hexfield.com.au<br>
+        www.hexfield.com.au
+      </div>
+    </div>
+  </section>
+
+  <table class="lines">
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th class="num" style="width:90px;">Qty</th>
+        <th class="num" style="width:140px;">Unit price (AUD)</th>
+        <th class="num" style="width:140px;">Amount (AUD)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="desc-title">Website design &amp; development — euroheaven.com.au</div>
+          <div class="desc-detail">
+            Bespoke Next.js / React 19 website with marketing pages,
+            customer booking workflow (email + SMS), real-time repair
+            tracking, workshop admin dashboard, Supabase auth, Twilio /
+            Resend / Google Calendar integrations, AI chatbot, full SEO
+            (sitemap, structured data, OG), and Vercel deployment.
+            Includes the Owner User Manual.
+          </div>
+        </td>
+        <td class="num">1</td>
+        <td class="num">2,000.00</td>
+        <td class="num">2,000.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <table>
+      <tr><td class="label">Subtotal</td><td>AUD&nbsp;&nbsp;2,000.00</td></tr>
+      <tr><td class="label">GST</td><td>Not applicable</td></tr>
+      <tr class="grand"><td class="label">Total due</td><td>AUD&nbsp;&nbsp;2,000.00</td></tr>
+    </table>
+  </div>
+
+  <section class="pay">
+    <div class="pay-card">
+      <h3>Payment — Bank transfer</h3>
+      <dl>
+        <dt>Account name</dt><dd>Hexfield Pty Ltd</dd>
+        <dt>BSB</dt><dd>067-873</dd>
+        <dt>Account number</dt><dd>24374879</dd>
+        <dt>Reference</dt><dd>HEX260001</dd>
+      </dl>
+    </div>
+    <div class="pay-card">
+      <h3>Notes</h3>
+      <p>
+        Amount is quoted in Australian Dollars and is <strong>GST
+        exclusive</strong>. Hexfield Pty Ltd is not currently registered
+        for GST; no GST is charged or claimable on this invoice.
+      </p>
+      <p>
+        Payment is due within 7 days of the issue date. Please quote
+        invoice number <strong>HEX260001</strong> on the bank transfer
+        so the payment can be reconciled.
+      </p>
+    </div>
+  </section>
+
+  <div class="doc-footer">
+    Hexfield Pty Ltd · Adelaide, South Australia, Australia · www.hexfield.com.au<br>
+    Invoice HEX260001 · Issued 22 June 2026
+  </div>
+
+</div>
+</body>
+</html>

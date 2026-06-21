@@ -18,8 +18,20 @@ export default function MobileCTA() {
     return null;
   }
   return (
-    <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-ink-900/95 backdrop-blur border-t border-white/10">
-      <div className="grid grid-cols-2 gap-2 p-2">
+    <div
+      className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-ink-900/95 backdrop-blur border-t border-white/10"
+      style={{
+        // Respect the iPhone home-indicator safe area so the bar
+        // doesn't sit underneath the indicator on notched devices.
+        paddingBottom: "env(safe-area-inset-bottom)",
+      }}
+    >
+      {/* Interior padding bumped from p-2 to px-4/py-2.5 — the previous
+          8 px horizontal padding put the Book Now / Call buttons right
+          against the device edge, where their rounded corners read as
+          "spilling off" the screen, especially on phones with curved
+          edges. 16 px gives the buttons visible breathing room. */}
+      <div className="grid grid-cols-2 gap-2.5 px-4 py-2.5">
         <a href={`tel:${site.phone}`} className="btn-outline py-3 text-sm">
           <Phone className="w-4 h-4" /> Call
         </a>

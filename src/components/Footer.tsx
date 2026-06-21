@@ -153,7 +153,12 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/5">
-        <div className="container py-6 grid grid-cols-1 md:grid-cols-3 gap-3 items-center text-xs text-white/45">
+        {/* pt-6 / lg:pb-6 keeps the desktop spacing unchanged.
+            pb-28 on mobile lifts the legal-links row clear of the
+            fixed MobileCTA bar (~72 px tall, at bottom-0) so the
+            owner can actually scroll Terms / Staff Login into view
+            on a phone instead of them being permanently covered. */}
+        <div className="container pt-6 pb-28 lg:pb-6 grid grid-cols-1 md:grid-cols-3 gap-3 items-center text-xs text-white/45">
           <div className="md:text-left text-center">
             © {new Date().getFullYear()} {site.name}. ABN {site.abn}. All
             rights reserved.
@@ -169,7 +174,13 @@ export default function Footer() {
               Hexfield Pty Ltd
             </a>
           </div>
-          <div className="flex md:justify-end justify-center gap-5">
+          {/* lg:pr-20 keeps the rightmost links clear of the floating
+              chat FAB ([src/components/FloatingChat.tsx]) which sits at
+              right-6 bottom-6 (24–80 px from the viewport's right and
+              bottom edges). Without this padding, on viewports ≤ ~1440px
+              the FAB lands directly over "Terms" and "Staff Login" and
+              intercepts the click. */}
+          <div className="flex md:justify-end justify-center gap-5 lg:pr-20">
             <Link href="/privacy" className="hover:text-white">Privacy</Link>
             <Link href="/terms" className="hover:text-white">Terms</Link>
             <Link href="/staff/login" className="hover:text-white">

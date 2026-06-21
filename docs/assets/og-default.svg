@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#0F1014"/>
+
+  <!-- "HF" monogram (light), mirrors src/components/Logo.astro. -->
+  <g transform="translate(90 205) scale(2.2)" fill="#ECECEA">
+    <path fill-rule="evenodd" d="M46 6 L94 6 L94 54 Q94 94 54 94 L6 94 L6 46 Q6 6 46 6 Z M46 17 L83 17 L83 54 Q83 83 54 83 L17 83 L17 46 Q17 17 46 17 Z"/>
+    <path d="M27 28 H37 V74 H27 Z M47 28 H57 V74 H47 Z M47 28 H73 V38 H47 Z M27 45 H72 V55 H27 Z"/>
+  </g>
+
+  <!-- Brand wordmark + tagline. -->
+  <text x="360" y="300" font-family="Roboto, system-ui, sans-serif" font-weight="800"
+        font-size="96" fill="#FFFFFF" letter-spacing="-3">Hexfield</text>
+  <text x="362" y="368" font-family="Roboto, system-ui, sans-serif" font-weight="500"
+        font-size="32" fill="#C8F031">Smart Digital Systems.</text>
+  <text x="362" y="416" font-family="Roboto, system-ui, sans-serif" font-weight="400"
+        font-size="22" fill="rgba(255,255,255,0.7)">Built by one expert, for your entire business.</text>
+  <text x="362" y="464" font-family="Roboto, system-ui, sans-serif" font-weight="400"
+        font-size="20" fill="rgba(255,255,255,0.55)">From Adelaide to the world.</text>
+</svg>

@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<title>Euro Heaven Website — Owner User Manual</title>
+<style>
+  :root {
+    --ink: #0F1014;
+    --silver: #e0e0e0;
+    --muted: #606060;
+    --rule: #d4d4d4;
+    --accent: #1e3a8a;
+    --warn-bg: #fff7ed;
+    --warn-border: #f97316;
+    --info-bg: #f1f5f9;
+    --info-border: #94a3b8;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font: 14px/1.6 "Roboto", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+  p, li, dd { text-align: justify; }
+  /* Don't justify headings, table cells, captions, callout titles —
+     justification only reads cleanly in flowing paragraph copy. */
+  h1, h2, h3, th, td, .callout-title, .toc li, .cover-meta,
+  .doc-footer { text-align: left; }
+  th { text-align: left; }
+  table.lines td.num, table th.num, .totals td { text-align: right; }
+  .page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 48px 56px;
+  }
+  /* Cover */
+  .cover {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    page-break-after: always;
+  }
+  .cover-mark { width: 240px; margin-bottom: 60px; }
+  .cover h1 {
+    font-size: 42px;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin: 0 0 12px;
+    font-weight: 800;
+  }
+  .cover .sub {
+    font-size: 18px;
+    color: var(--muted);
+    margin-bottom: 80px;
+  }
+  .cover-meta {
+    border-top: 2px solid var(--ink);
+    padding-top: 16px;
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+  }
+  /* Body typography */
+  h1 {
+    font-size: 28px;
+    margin: 40px 0 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--ink);
+    letter-spacing: -0.3px;
+  }
+  h2 {
+    font-size: 19px;
+    margin: 30px 0 10px;
+    color: var(--ink);
+    letter-spacing: -0.2px;
+  }
+  h3 {
+    font-size: 15px;
+    margin: 22px 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  p { margin: 8px 0 12px; }
+  ol, ul { margin: 6px 0 12px; padding-left: 22px; }
+  li { margin: 4px 0; }
+  code {
+    background: #f1f1f1;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: "SF Mono", Consolas, Menlo, monospace;
+    font-size: 12px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px;
+    font-size: 13px;
+  }
+  th, td {
+    border: 1px solid var(--rule);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: #f7f7f7; font-weight: 600; }
+  /* Callouts */
+  .callout {
+    border-left: 4px solid var(--info-border);
+    background: var(--info-bg);
+    padding: 12px 14px;
+    margin: 14px 0 18px;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout.warn {
+    border-left-color: var(--warn-border);
+    background: var(--warn-bg);
+  }
+  .callout-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  /* TOC */
+  .toc { columns: 1; }
+  .toc ol { counter-reset: section; padding-left: 0; list-style: none; }
+  .toc li {
+    border-bottom: 1px dotted var(--rule);
+    padding: 6px 0;
+    display: flex;
+    justify-content: space-between;
+  }
+  .toc li::before {
+    counter-increment: section;
+    content: counter(section) ".";
+    color: var(--muted);
+    width: 28px;
+    flex-shrink: 0;
+  }
+  .toc li span:first-of-type { flex: 1; }
+  .toc li span:last-of-type { color: var(--muted); font-variant-numeric: tabular-nums; }
+  /* Page breaks */
+  .pb { page-break-before: always; }
+  /* Footer */
+  .doc-footer {
+    margin-top: 64px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+  }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); }
+  /* Print sizing */
+  @page { size: A4; margin: 18mm; }
+  @media print {
+    .page { padding: 0; }
+    .pb { page-break-before: always; }
+    h1, h2, h3 { page-break-after: avoid; }
+    table, ul, ol, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== COVER ============== -->
+<section class="page cover">
+  <div>
+    <img src="assets/logo.svg" alt="Hexfield" class="cover-mark">
+    <h1>Euro Heaven Website<br>Owner User Manual</h1>
+    <div class="sub">euroheaven.com.au · Workshop admin guide</div>
+  </div>
+  <div class="cover-meta">
+    <span>Version 1.0</span>
+    <span>Prepared 21 June 2026</span>
+    <span>Hexfield Pty Ltd</span>
+  </div>
+</section>
+
+<!-- ============== TOC ============== -->
+<section class="page">
+  <h1>Contents</h1>
+  <div class="toc">
+    <ol>
+      <li><span>Introduction</span><span>3</span></li>
+      <li><span>What customers see</span><span>4</span></li>
+      <li><span>Staff sign-in</span><span>5</span></li>
+      <li><span>Admin dashboard — finding bookings</span><span>6</span></li>
+      <li><span>Updating a repair stage</span><span>7</span></li>
+      <li><span>Adding customer-visible notes</span><span>8</span></li>
+      <li><span>Customer notifications (SMS &amp; email)</span><span>9</span></li>
+      <li><span>Resetting your password</span><span>10</span></li>
+      <li><span>Adding or removing a staff member</span><span>11</span></li>
+      <li><span>Critical ongoing responsibilities</span><span>12</span></li>
+      <li><span>Support and contact</span><span>14</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============== 1. INTRODUCTION ============== -->
+<section class="page pb">
+  <h1>1. Introduction</h1>
+  <p>
+    This manual is your day-to-day reference for running the Euro Heaven
+    website — <a href="https://euroheaven.com.au">euroheaven.com.au</a>.
+    It covers the two things you will do most often as the owner:
+  </p>
+  <ol>
+    <li><strong>Sign in to the workshop admin</strong> at any time of day.</li>
+    <li><strong>Update repair stages and notes</strong> against each booking, so customers see live progress on their tracking page and receive an SMS update.</li>
+  </ol>
+  <p>
+    It also covers two areas you must not forget about: ongoing
+    payments (Twilio for SMS) and renewing your domain and email with
+    Hostinger before they expire. Both are flagged in
+    <a href="#critical">Section 10 — Critical ongoing responsibilities</a>.
+  </p>
+
+  <h2>How to read this manual</h2>
+  <p>
+    Each section starts with a short summary of what it covers, then a
+    numbered step-by-step. Where a step needs special attention,
+    look for a coloured callout box:
+  </p>
+
+  <div class="callout">
+    <div class="callout-title">Tip</div>
+    Useful background, shortcuts, or context. Safe to skim.
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">Important</div>
+    Action required, or something that can break if missed. Don't skip these.
+  </div>
+</section>
+
+<!-- ============== 2. WHAT CUSTOMERS SEE ============== -->
+<section class="page pb">
+  <h1>2. What customers see</h1>
+  <p>
+    Customers land at <a href="https://euroheaven.com.au">euroheaven.com.au</a>
+    and can do four things without ever signing in:
+  </p>
+
+  <table>
+    <thead><tr><th>Page</th><th>Purpose</th><th>What gets created</th></tr></thead>
+    <tbody>
+      <tr><td><strong>/book</strong></td><td>Submit a repair booking — vehicle, service, drop-off time, contact details, description of the issue.</td><td>A new booking with a reference like <code>MBR-2026-1234</code>. You receive an SMS + email.</td></tr>
+      <tr><td><strong>/track</strong></td><td>Check the live status of an existing repair using the reference.</td><td>Nothing — read-only view of the stage timeline + any customer-visible notes you have added.</td></tr>
+      <tr><td><strong>/contact</strong></td><td>Send a general enquiry.</td><td>An email lands in the <code>info@euroheaven.com.au</code> inbox.</td></tr>
+      <tr><td><strong>/services, /models, /about, /blog</strong></td><td>Marketing pages — search-engine visible.</td><td>Nothing.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>The booking reference</h2>
+  <p>
+    Each booking gets a unique, share-able reference of the form
+    <code>MBR-YYYY-NNNN</code> (for example <code>MBR-2026-7222</code>).
+    The customer can paste this into <strong>/track</strong> to see live
+    stage progress at any time. The reference is also included in every
+    SMS and email we send them, so they don't need to remember it.
+  </p>
+</section>
+
+<!-- ============== 3. STAFF LOGIN ============== -->
+<section class="page pb">
+  <h1>3. Staff sign-in</h1>
+  <p>
+    Staff access lives at <code>/staff/login</code>. The footer of every
+    page has a <strong>Staff Login</strong> link as a shortcut.
+  </p>
+
+  <h2>To sign in</h2>
+  <ol>
+    <li>Go to <a href="https://euroheaven.com.au/staff/login">https://euroheaven.com.au/staff/login</a>.</li>
+    <li>Enter your <strong>email address</strong> (the one your account was created with) and your <strong>password</strong>.</li>
+    <li>Click <strong>Sign in</strong>.</li>
+    <li>You will land on <code>/admin</code> — the workshop admin dashboard.</li>
+  </ol>
+
+  <div class="callout">
+    <div class="callout-title">Session length</div>
+    Once signed in, your session lasts up to one week of activity. You do
+    not need to log in every visit unless you have explicitly signed out.
+  </div>
+
+  <h2>To sign out</h2>
+  <p>
+    Click <strong>Sign out</strong> in the sticky black bar at the top of
+    any <code>/admin</code> page.
+  </p>
+
+  <h2>Forgotten password?</h2>
+  <p>
+    See <a href="#reset">Section 8 — Resetting your password</a>.
+  </p>
+
+  <div class="callout warn">
+    <div class="callout-title">Never share your password</div>
+    Every action you take in the admin is recorded with your email next
+    to it. If you share your password, the audit log can no longer
+    distinguish between you and the person you shared it with.
+  </div>
+</section>
+
+<!-- ============== 4. ADMIN DASHBOARD ============== -->
+<section class="page pb">
+  <h1>4. Admin dashboard — finding bookings</h1>
+  <p>
+    <code>/admin</code> shows every booking ever made, newest first.
+    A toolbar at the top lets you narrow the list quickly.
+  </p>
+
+  <h2>The toolbar</h2>
+  <table>
+    <thead><tr><th>Control</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Search</strong></td><td>Type any part of a booking reference or vehicle rego — for example <code>5554</code> or <code>ABC123</code>. Case-insensitive.</td></tr>
+      <tr><td><strong>Date filter</strong></td><td><em>All dates</em>, <em>Today</em>, <em>This week</em>, <em>This month</em>, or <em>Custom range</em>. Choosing Custom shows two date pickers underneath.</td></tr>
+      <tr><td><strong>Sort by</strong></td><td><em>Newest appointment first</em> (default), <em>Oldest first</em>, <em>Reference (newest #)</em>, or <em>Stage</em> (groups all bookings at the same status).</td></tr>
+      <tr><td><strong>Clear filters</strong></td><td>Appears next to the booking count whenever any filter is active. Resets everything.</td></tr>
+      <tr><td><strong>Refresh</strong></td><td>Pulls the latest from the database (top-right). The page does not auto-refresh.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Each booking card shows</h2>
+  <ul>
+    <li>Booking reference + current stage (top corners)</li>
+    <li>Customer name, phone, email</li>
+    <li>Vehicle year, model, rego, odometer</li>
+    <li>Service requested + appointment date/time</li>
+    <li>The issue the customer described</li>
+    <li>A row of stage pills (Booked → … → Completed) — current stage is highlighted</li>
+    <li>A <strong>Manage</strong> link (top-right) → opens the dedicated booking page</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-title">Two ways to update a stage</div>
+    Click a stage pill directly on the card (quick), or click <strong>Manage</strong> and update it from the detail page (recommended — lets you attach a note in the same action). Either way the customer sees the same update.
+  </div>
+</section>
+
+<!-- ============== 5. UPDATING A REPAIR STAGE ============== -->
+<section class="page pb">
+  <h1>5. Updating a repair stage</h1>
+  <p>
+    Stages exist so customers see their car move through the workshop in
+    near-real-time. The stages in order are:
+  </p>
+  <ol>
+    <li><strong>Booked</strong> — set automatically when the customer submits the booking form.</li>
+    <li>Vehicle Received</li>
+    <li>Diagnosis in Progress</li>
+    <li>Quote Sent</li>
+    <li>Awaiting Approval</li>
+    <li>Parts Ordered</li>
+    <li>Repair in Progress</li>
+    <li>Quality Check</li>
+    <li>Ready for Pickup</li>
+    <li><strong>Completed</strong> — final state.</li>
+  </ol>
+
+  <div class="callout">
+    <div class="callout-title">Skip stages that don't apply</div>
+    A simple service may jump straight from <em>Vehicle Received</em> to
+    <em>Ready for Pickup</em>. The customer's tracking page only shows
+    the stages you actually clicked, so skipping is encouraged when a
+    stage doesn't apply — don't pad the timeline.
+  </div>
+
+  <h2>From the list view (quick)</h2>
+  <ol>
+    <li>Find the booking on <code>/admin</code> (use search or filters).</li>
+    <li>Click the new stage pill at the bottom of the card.</li>
+    <li>A confirmation dialog appears: <em>"Change MBR-2026-XXXX from <strong>Vehicle Received</strong> to <strong>Diagnosis in Progress</strong>?"</em></li>
+    <li>Click <strong>Update stage</strong> to confirm, or <strong>Cancel</strong>.</li>
+  </ol>
+
+  <h2>From the detail page (recommended — lets you attach a note)</h2>
+  <ol>
+    <li>Click <strong>Manage</strong> on the booking card. You land on <code>/admin/bookings/MBR-XXXX</code>.</li>
+    <li><strong>(Optional)</strong> Type a note in the <em>Note (optional)</em> box. Pick visibility — <em>Visible to customer</em> means it shows on their tracking page <strong>and triggers a customer SMS</strong>; <em>Internal only</em> stays staff-side.</li>
+    <li>Click the new stage pill at the bottom.</li>
+    <li>Confirm in the dialog.</li>
+    <li>The stage updates, the note is attached, and (if applicable) the customer SMS is queued. The right-hand <em>Activity</em> column shows everything that just happened.</li>
+  </ol>
+
+  <div class="callout warn">
+    <div class="callout-title">The stage change is real-time</div>
+    The customer's <code>/track</code> page polls every 5 seconds while
+    open. Within seconds of you clicking <strong>Update stage</strong>,
+    they will see the new stage on their device. Plan accordingly —
+    don't click stages "to test" if a real customer is watching.
+  </div>
+</section>
+
+<!-- ============== 6. NOTES ============== -->
+<section class="page pb">
+  <h1>6. Adding customer-visible notes</h1>
+  <p>
+    Notes are how you communicate progress detail. Two visibility modes:
+  </p>
+
+  <table>
+    <thead><tr><th>Visibility</th><th>Who sees it</th><th>SMS?</th><th>Use for</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Visible to customer</strong></td>
+        <td>Customer (on their <code>/track</code> page) + all staff</td>
+        <td><strong>Yes</strong> — customer's phone receives the note text</td>
+        <td>Quote amounts, "parts arrive Wednesday", "ready for collection from 2pm", etc.</td>
+      </tr>
+      <tr>
+        <td><strong>Internal only</strong></td>
+        <td>Staff only (admin pages)</td>
+        <td>No</td>
+        <td>Diagnostic findings you don't want to share yet, technician handover notes, things you'd say out loud in the workshop.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>To add a note</h2>
+  <ol>
+    <li>Open the booking detail page (<strong>Manage</strong> on a card).</li>
+    <li>Type your note in the <em>Note (optional)</em> textarea.</li>
+    <li>Pick <strong>Visible to customer</strong> or <strong>Internal only</strong>.</li>
+    <li><strong>Either</strong> click <strong>Add note without changing stage</strong> (note posts immediately, no stage change), <strong>or</strong> click a stage pill so the note is attached to the stage change in one action.</li>
+  </ol>
+
+  <div class="callout">
+    <div class="callout-title">Keep customer notes short</div>
+    Customer-visible notes go out as SMS. Anything over about 140
+    characters is automatically trimmed with "…" when sent to the phone,
+    though the full text shows on the tracking page. Lead with the
+    important bit.
+  </div>
+</section>
+
+<!-- ============== 7. SMS / EMAIL ============== -->
+<section class="page pb">
+  <h1>7. Customer notifications (SMS &amp; email)</h1>
+  <p>
+    The site sends both SMS and email automatically — you don't trigger
+    them manually. Here's what fires when:
+  </p>
+
+  <table>
+    <thead><tr><th>Trigger</th><th>Customer receives</th><th>You receive</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Customer submits <code>/book</code></td>
+        <td>Confirmation SMS with reference + confirmation email</td>
+        <td>Owner alert SMS to <strong>0400 115 765</strong> + staff inbox email at <strong>info@euroheaven.com.au</strong></td>
+      </tr>
+      <tr>
+        <td>You change a stage</td>
+        <td>SMS: "Euro Heaven MBR-XXXX is now [Stage]" + link to <code>/track</code></td>
+        <td>Nothing (you just did it)</td>
+      </tr>
+      <tr>
+        <td>You add a customer-visible note</td>
+        <td>SMS with the note text and a link to <code>/track</code></td>
+        <td>Nothing</td>
+      </tr>
+      <tr>
+        <td>You add an internal-only note</td>
+        <td>Nothing</td>
+        <td>Nothing (silent)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <div class="callout-title">SMS requires Twilio to be paid</div>
+    SMS sends only fire while your <strong>Twilio</strong> account is in
+    good standing. See <a href="#critical">Section 10</a> for the
+    payment responsibilities. If Twilio is out of credit or in trial
+    mode, SMS fails silently — the customer still sees the stage update
+    on their tracking page, but they will not receive a text.
+  </div>
+</section>
+
+<!-- ============== 8. PASSWORD RESET ============== -->
+<section class="page pb" id="reset">
+  <h1>8. Resetting your password</h1>
+  <p>
+    The workshop admin runs on Supabase, but the Supabase account is
+    held by Hexfield — you do not have direct access to it. To reset
+    any staff password (your own or another technician's), contact
+    Hexfield and we will trigger the recovery email for you.
+  </p>
+
+  <h2>How to request a reset</h2>
+  <ol>
+    <li>
+      Email <a href="mailto:info@hexfield.com.au">info@hexfield.com.au</a>
+      with the subject <em>"Euro Heaven — password reset for
+      &lt;staff email&gt;"</em>.
+    </li>
+    <li>
+      Include the email address of the staff account that needs the
+      reset. (Don't include any current or proposed password — Hexfield
+      doesn't need it and won't see your new one.)
+    </li>
+    <li>
+      Hexfield triggers the Supabase password-recovery email. Within a
+      few minutes the staff member receives an email from Supabase with
+      a one-time link.
+    </li>
+    <li>
+      The staff member opens the email on the device they want to use,
+      taps the link, and lands at <code>/auth/reset-password</code> on
+      the live site. They type a new password twice and click
+      <strong>Update password</strong>.
+    </li>
+    <li>
+      They're redirected to <code>/staff/login</code>. Signing in with
+      the new password gets them back into <code>/admin</code>.
+    </li>
+  </ol>
+
+  <div class="callout">
+    <div class="callout-title">Recovery links expire</div>
+    The recovery link in the email is valid for 1 hour. If a staff
+    member doesn't click it in time, email Hexfield again for a fresh
+    one — there is no limit on how many times this can be done.
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">Hexfield never sees your password</div>
+    The recovery flow lets the staff member <em>set</em> a new password
+    themselves on the live site. Hexfield only triggers the email; the
+    new password never passes through Hexfield's hands. If you are ever
+    asked for your password by email or phone, treat it as a scam.
+  </div>
+</section>
+
+<!-- ============== 9. STAFF ADD/REMOVE ============== -->
+<section class="page pb">
+  <h1>9. Adding or removing a staff member</h1>
+  <p>
+    Like password resets, granting or revoking workshop admin access is
+    a Supabase-side action that Hexfield holds the keys to. Email
+    Hexfield and we will provision or remove the account for you.
+  </p>
+
+  <h2>Add a new staff member</h2>
+  <ol>
+    <li>
+      Email <a href="mailto:info@hexfield.com.au">info@hexfield.com.au</a>
+      with the subject <em>"Euro Heaven — add staff &lt;name&gt;"</em>.
+    </li>
+    <li>
+      Include the new technician's <strong>full name</strong> and
+      <strong>work email address</strong>. Hexfield generates an
+      initial password and configures the account.
+    </li>
+    <li>
+      Hexfield emails you back with the new user's email + initial
+      password. Pass these to the new staff member in person or via
+      a secure channel — <strong>do not</strong> forward them in plain
+      email.
+    </li>
+    <li>
+      Ask the new staff member to sign in once at
+      <code>/staff/login</code>, then immediately request a personal
+      password reset via the flow in
+      <a href="#reset">Section 8</a> so they own a password Hexfield
+      has never seen.
+    </li>
+  </ol>
+
+  <h2>Remove a staff member</h2>
+  <ol>
+    <li>
+      Email <a href="mailto:info@hexfield.com.au">info@hexfield.com.au</a>
+      with the subject <em>"Euro Heaven — remove staff &lt;email&gt;"</em>.
+    </li>
+    <li>
+      Include the email address of the departing staff member.
+    </li>
+    <li>
+      Hexfield revokes their account and removes them from the staff
+      allowlist within the same business day. They are immediately
+      signed out of any active session and cannot re-enter
+      <code>/admin</code>.
+    </li>
+  </ol>
+
+  <div class="callout warn">
+    <div class="callout-title">Remove access promptly</div>
+    Always perform the removal the same day a staff member leaves. While
+    their email is in <code>staff_emails</code> they can sign in to
+    <code>/admin</code> and update bookings.
+  </div>
+</section>
+
+<!-- ============== 10. CRITICAL RESPONSIBILITIES ============== -->
+<section class="page pb" id="critical">
+  <h1>10. Critical ongoing responsibilities</h1>
+  <p>
+    Three external services keep the site running. If any of them lapse,
+    the site (or its key features) will fail. These are <strong>your</strong>
+    responsibility as the owner — Hexfield does not auto-renew them on
+    your behalf.
+  </p>
+
+  <h2>10.1 Twilio — customer SMS</h2>
+  <p>
+    SMS notifications to customers and to the owner phone
+    (<strong>0400 115 765</strong>) run through Twilio. Twilio operates
+    on a <strong>pay-as-you-go credit balance</strong> — you must keep
+    a payment method on file and ensure the balance is topped up.
+  </p>
+  <ol>
+    <li>Sign in to <a href="https://console.twilio.com">console.twilio.com</a>.</li>
+    <li><strong>Billing → Payment methods</strong>: confirm a valid card is on file.</li>
+    <li><strong>Billing → Auto-recharge</strong>: enable auto-recharge so the balance tops up when it falls below your threshold (recommended: top-up to $30 when balance drops below $10).</li>
+    <li>Check the balance monthly. At typical booking volume (~30/month) SMS costs are a few dollars per month.</li>
+  </ol>
+
+  <div class="callout warn">
+    <div class="callout-title">Out-of-credit failure mode</div>
+    If the Twilio balance hits zero, SMS sends fail silently. Stage
+    changes still happen and email still works — but customers stop
+    receiving texts. Set up auto-recharge so this never happens.
+  </div>
+
+  <h2>10.2 Hostinger — domain renewal</h2>
+  <table>
+    <thead><tr><th>Item</th><th>Expires</th><th>Registered to</th></tr></thead>
+    <tbody>
+      <tr><td><strong>euroheaven.com.au</strong> (domain)</td><td><strong>19 February 2027</strong></td><td>preneeth.merc@gmail.com</td></tr>
+      <tr><td><strong>info@euroheaven.com.au</strong> (mailbox)</td><td><strong>21 April 2027</strong></td><td>preneeth.merc@gmail.com</td></tr>
+    </tbody>
+  </table>
+
+  <ol>
+    <li>Sign in to <a href="https://hpanel.hostinger.com">hpanel.hostinger.com</a> using <strong>preneeth.merc@gmail.com</strong>.</li>
+    <li><strong>Domains</strong>: confirm <code>euroheaven.com.au</code> is set to <strong>auto-renew</strong>. Renew manually before <strong>19 February 2027</strong> if auto-renew is off.</li>
+    <li><strong>Emails</strong>: confirm the <code>info@euroheaven.com.au</code> mailbox is set to <strong>auto-renew</strong>. Renew manually before <strong>21 April 2027</strong>.</li>
+    <li>Check the card on file is current well before each renewal date.</li>
+  </ol>
+
+  <div class="callout warn">
+    <div class="callout-title">Domain expiry is catastrophic</div>
+    If <code>euroheaven.com.au</code> lapses, the website, customer
+    emails, and the Supabase auth redirect URLs all stop working at
+    once. Recovery requires re-registering the domain (auDA gives a
+    short grace period but it isn't guaranteed). <strong>Set a calendar
+    reminder for 19 January 2027 — one month before expiry.</strong>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">If the registrant email changes</div>
+    <strong>preneeth.merc@gmail.com</strong> is the contact Hostinger
+    uses for renewal notices. If that mailbox is ever closed, update
+    Hostinger's account email <em>before</em> the change so renewal
+    reminders still reach you.
+  </div>
+
+  <h2>10.3 Other paid services to keep healthy</h2>
+  <ul>
+    <li><strong>Vercel</strong> — site hosting. Free tier is fine for current traffic; only paid if you exceed 100 GB bandwidth/month.</li>
+    <li><strong>Supabase</strong> — database + auth. Free tier covers up to 50 000 monthly users — comfortably enough.</li>
+    <li><strong>Resend</strong> — booking confirmation emails. Free tier is 3 000 emails/month.</li>
+    <li><strong>Google Gemini</strong> (AI chatbot) — free tier is 1 500 chats/day. Beyond that, the chatbot falls back to a keyword matcher.</li>
+  </ul>
+  <p>
+    None of the above currently cost money at Euro Heaven's volume. If
+    Vercel or Resend send a "you're approaching your limit" email,
+    forward it to Hexfield and we'll advise.
+  </p>
+</section>
+
+<!-- ============== 11. SUPPORT ============== -->
+<section class="page pb">
+  <h1>11. Support and contact</h1>
+  <p>
+    For anything that isn't covered in this manual — site bugs, feature
+    requests, integration questions, or anything that looks broken —
+    contact Hexfield.
+  </p>
+  <table>
+    <thead><tr><th>What</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td>Website developer</td><td>Hexfield Pty Ltd</td></tr>
+      <tr><td>Web</td><td><a href="https://www.hexfield.com.au">www.hexfield.com.au</a></td></tr>
+      <tr><td>Email</td><td><a href="mailto:info@hexfield.com.au">info@hexfield.com.au</a></td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    When reporting an issue, include:
+  </p>
+  <ul>
+    <li>The page URL where it happened</li>
+    <li>What you expected to happen vs. what actually happened</li>
+    <li>The booking reference if applicable</li>
+    <li>A screenshot if you can — even a phone photo of the screen helps</li>
+  </ul>
+
+  <div class="doc-footer">
+    Euro Heaven Website — Owner User Manual · Version 1.0 · 21 June 2026<br>
+    © 2026 Hexfield Pty Ltd · www.hexfield.com.au
+  </div>
+</section>
+
+</body>
+</html>
