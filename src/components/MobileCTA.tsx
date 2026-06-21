@@ -32,10 +32,23 @@ export default function MobileCTA() {
           "spilling off" the screen, especially on phones with curved
           edges. 16 px gives the buttons visible breathing room. */}
       <div className="grid grid-cols-2 gap-2.5 px-4 py-2.5">
-        <a href={`tel:${site.phone}`} className="btn-outline py-3 text-sm">
+        {/* w-full min-w-0 forces both buttons to fill their grid cell
+            regardless of intrinsic content width — without it, the
+            btn-primary/btn-outline styles can size to content and
+            push past the cell edge, which is what the user saw with
+            the Book Now button bleeding past the device's right
+            margin. min-w-0 also lets the cell shrink below the
+            content's natural width if needed. */}
+        <a
+          href={`tel:${site.phone}`}
+          className="btn-outline py-3 text-sm w-full min-w-0"
+        >
           <Phone className="w-4 h-4" /> Call
         </a>
-        <Link href="/book" className="btn-primary py-3 text-sm">
+        <Link
+          href="/book"
+          className="btn-primary py-3 text-sm w-full min-w-0"
+        >
           Book Now <ArrowUpRight className="w-4 h-4" />
         </Link>
       </div>
