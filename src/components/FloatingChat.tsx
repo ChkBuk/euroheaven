@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { X, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -65,6 +65,25 @@ export default function FloatingChat() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
+  // Tracks whether the page <footer> is currently in the viewport.
+  // When it is, we hide the entire FAB so it can never sit on top of
+  // the footer's legal links (Privacy / Terms / Staff Login) and
+  // intercept their clicks. The user is at the footer — they're not
+  // looking to chat; they want to reach the links.
+  const [footerInView, setFooterInView] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+    const observer = new IntersectionObserver(
+      (entries) => setFooterInView(entries[0]?.isIntersecting ?? false),
+      // Trigger as soon as any part of the footer enters the viewport.
+      { rootMargin: "0px" }
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   if (
     pathname &&
@@ -121,10 +140,16 @@ export default function FloatingChat() {
 
       {/* Mobile: bottom-20 keeps the FAB clear of the MobileCTA bar.
           Desktop (lg+): bottom-24 lifts the FAB above the footer's
-          bottom strip so it cannot intercept clicks on Privacy /
-          Terms / Staff Login when the user is scrolled all the way
-          down. */}
-      <div className="fixed right-4 md:right-6 bottom-20 lg:bottom-24 z-40 flex flex-col items-end gap-3">
+          bottom strip. AND when the footer scrolls into view, the
+          entire FAB fades out so it can never intercept clicks on
+          Privacy / Terms / Staff Login on any viewport / phone size. */}
+      <div
+        className={cn(
+          "fixed right-4 md:right-6 bottom-20 lg:bottom-24 z-40 flex flex-col items-end gap-3 transition-opacity duration-200",
+          footerInView && "opacity-0 pointer-events-none"
+        )}
+        aria-hidden={footerInView}
+      >
         <div
           className={cn(
             "flex flex-col items-end gap-3 transition-all duration-300",
