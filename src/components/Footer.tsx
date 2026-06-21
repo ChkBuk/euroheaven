@@ -153,12 +153,23 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/5">
-        <div className="container py-6 flex flex-col md:flex-row justify-between gap-3 text-xs text-white/45">
-          <div>
+        <div className="container py-6 grid grid-cols-1 md:grid-cols-3 gap-3 items-center text-xs text-white/45">
+          <div className="md:text-left text-center">
             © {new Date().getFullYear()} {site.name}. ABN {site.abn}. All
             rights reserved.
           </div>
-          <div className="flex gap-5">
+          <div className="text-center">
+            Developed by{" "}
+            <a
+              href="https://www.hexfield.com.au"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white underline underline-offset-2"
+            >
+              Hexfield Pty Ltd
+            </a>
+          </div>
+          <div className="flex md:justify-end justify-center gap-5">
             <Link href="/privacy" className="hover:text-white">Privacy</Link>
             <Link href="/terms" className="hover:text-white">Terms</Link>
             <Link href="/staff/login" className="hover:text-white">

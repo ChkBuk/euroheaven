@@ -7,6 +7,7 @@ import MobileCTA from "@/components/MobileCTA";
 import FloatingChat from "@/components/FloatingChat";
 import CookieConsent from "@/components/CookieConsent";
 import StructuredData from "@/components/StructuredData";
+import RecoveryRedirector from "@/components/RecoveryRedirector";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -69,6 +70,7 @@ export default function RootLayout({
     <html lang="en-AU" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="font-sans bg-ink-950 text-white" suppressHydrationWarning>
         <StructuredData />
+        <RecoveryRedirector />
         <Header />
         <main className="min-h-[60vh]">{children}</main>
         <Footer />
