@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 80" width="340" height="80">
-  <!-- Hexfield "HF" monogram + wordmark. Mirrors src/components/Logo.astro.
-       Solid #0F1014 on transparent (organisation logo for schema.org). -->
-  <g transform="translate(8 8) scale(0.64)" fill="#0F1014">
-    <path fill-rule="evenodd" d="M46 6 L94 6 L94 54 Q94 94 54 94 L6 94 L6 46 Q6 6 46 6 Z M46 17 L83 17 L83 54 Q83 83 54 83 L17 83 L17 46 Q17 17 46 17 Z"/>
-    <path d="M27 28 H37 V74 H27 Z M47 28 H57 V74 H47 Z M47 28 H73 V38 H47 Z M27 45 H72 V55 H27 Z"/>
-  </g>
-  <text x="86" y="53" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif"
-        font-weight="500" font-size="38" fill="#0F1014" letter-spacing="-1">Hexfield</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="80" viewBox="0 0 340 80"><g fill="#0F1014"><path fill-rule="evenodd" d="M46 6 L94 6 L94 54 Q94 94 54 94 L6 94 L6 46 Q6 6 46 6 Z M46 17 L83 17 L83 54 Q83 83 54 83 L17 83 L17 46 Q17 17 46 17 Z" transform="translate(8 8) scale(0.64)"/><path d="M27 28 H37 V74 H27 Z M47 28 H57 V74 H47 Z M47 28 H73 V38 H47 Z M27 45 H72 V55 H27 Z" transform="translate(8 8) scale(0.64)"/></g><text x="86" y="53" fill="#0F1014" font-family="Roboto, system-ui, -apple-system, Segoe UI, sans-serif" font-size="38" font-weight="500" letter-spacing="-1">Hexfield</text></svg>
