@@ -112,6 +112,19 @@ export default async function ServiceDetail({
                   <br />
                   <span className="text-accent">Melbourne</span>
                 </h1>
+                {/* Answer-first TL;DR — surfaces the page's primary
+                    answer for AI engines (Google AI Overview,
+                    ChatGPT, Claude, Gemini) and human readers who
+                    skim. Highest-leverage GEO surface; AI crawlers
+                    extract the first concrete answer with a price /
+                    time window they can find. */}
+                <p
+                  className="mb-6 max-w-xl text-base md:text-lg text-white border-l-4 border-accent pl-4 py-1 bg-accent/5 rounded-r"
+                  data-testid="service-tldr"
+                >
+                  <strong className="text-accent">TL;DR — </strong>
+                  {service.answer}
+                </p>
                 <p className="lead mb-8 max-w-xl">{service.description}</p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link href="/book" className="btn-primary">

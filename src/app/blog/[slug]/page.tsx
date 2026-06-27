@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Clock, ChevronLeft, ArrowUpRight } from "lucide-react";
-import { posts, getPost } from "@/lib/blog";
+import { posts, getPost, postReadTime, DEFAULT_AUTHOR } from "@/lib/blog";
 import Reveal from "@/components/Reveal";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 import { site } from "@/lib/site";
@@ -41,8 +41,14 @@ export default async function BlogPost({ params }: { params: RouteParams }) {
   const p = getPost(slug);
   if (!p) notFound();
 
+  const author = p.author ?? DEFAULT_AUTHOR;
+  const readMinutes = postReadTime(p);
+
   // BlogPosting JSON-LD — unlocks Google's article rich results and
   // makes the post eligible for Top Stories / Discover surfaces.
+  // Author is now bound to the post-level field (or DEFAULT_AUTHOR
+  // fallback) — a stronger E-E-A-T / GEO signal than a generic
+  // organisation byline.
   const blogPostingSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -50,7 +56,7 @@ export default async function BlogPost({ params }: { params: RouteParams }) {
     description: p.excerpt,
     datePublished: p.date,
     dateModified: p.date,
-    author: { "@type": "Organization", name: site.name, url: site.url },
+    author: { "@type": "Person", name: author },
     publisher: { "@id": `${site.url}#organization` },
     mainEntityOfPage: `${site.url}/blog/${p.slug}`,
     image: `${site.url}/og-image.jpg`,
@@ -78,18 +84,36 @@ export default async function BlogPost({ params }: { params: RouteParams }) {
           </Link>
           <Reveal>
             <h1 className="heading-1 mb-4">{p.title}</h1>
-            <div className="flex items-center gap-4 text-sm text-white/50 mb-10">
-              <time>
+            {/* Author + datetime byline. <address> is the semantic
+                element for author contact info; the rel="author"
+                link reinforces that to crawlers. <time datetime="…">
+                gives machines a clean ISO date for freshness
+                detection — Google + AI engines extract this for
+                E-E-A-T scoring and recency signals. */}
+            <address className="not-italic flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/55 mb-10">
+              <span>
+                By{" "}
+                <a
+                  href="/about"
+                  rel="author"
+                  className="text-white/80 hover:text-white"
+                >
+                  {author}
+                </a>
+              </span>
+              <span className="text-white/30">·</span>
+              <time dateTime={p.date}>
                 {new Date(p.date).toLocaleDateString("en-AU", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
                 })}
               </time>
+              <span className="text-white/30">·</span>
               <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4" /> {p.readTime} min read
+                <Clock className="w-4 h-4" /> {readMinutes} min read
               </span>
-            </div>
+            </address>
           </Reveal>
 
           <Reveal delay={100}>

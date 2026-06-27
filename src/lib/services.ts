@@ -4,6 +4,14 @@ export type Service = {
   slug: string;
   title: string;
   short: string;
+  /**
+   * Answer-first TL;DR rendered at the top of the service detail
+   * page. One or two sentences that directly answer the page's
+   * primary question, ideally including a concrete price + time
+   * window so AI engines (Google AI Overview, ChatGPT, Claude,
+   * Gemini) can extract a citable fact. Required for GEO ranking.
+   */
+  answer: string;
   description: string;
   icon: string;
   image: ImgKey;
@@ -20,6 +28,8 @@ export const services: Service[] = [
     slug: "logbook-service",
     title: "Mercedes-Benz Logbook Service",
     short: "Keep your warranty intact with Mercedes factory-spec servicing.",
+    answer:
+      "A Mercedes-Benz logbook service at Euro Heaven Dandenong starts from $395, takes 2–5 hours depending on Service A or Service B intervals, and uses genuine Mercedes parts plus MB-approved fluids (229.5 / 229.51 / 229.71) — keeping your factory warranty and resale value intact.",
     description:
       "We perform manufacturer-scheduled Service A and Service B intervals using genuine Mercedes-Benz parts and MB-approved fluids meeting 229.5, 229.51 or 229.71 specs. Every service is stamped in your logbook so your new-car warranty and resale value stay fully intact. We also run a complete STAR / Xentry diagnostic scan on every visit to catch developing issues before they become expensive repairs, and hand you back the car as clean as it arrived.",
     icon: "wrench",
@@ -47,6 +57,8 @@ export const services: Service[] = [
     slug: "brake-repair",
     title: "Mercedes-Benz Brake Repair",
     short: "Pads, rotors, sensors and fluid — done right the first time.",
+    answer:
+      "Mercedes brake replacement at Euro Heaven Dandenong starts from $480 per axle and takes 2–4 hours. We use Mercedes-spec pads and rotors, include a full DOT4 fluid flush and wear-sensor replacement, and service AMG carbon-ceramic brake systems too.",
     description:
       "From squealing pads on your daily C-Class to full carbon-ceramic rotor replacement on AMG performance models, our technicians use OEM or Mercedes-specified brake components matched exactly to your vehicle. Every brake job includes a full DOT4 fluid flush, wear-sensor replacement, caliper inspection and road test — so you feel the difference from the first press of the pedal. We also identify uneven wear patterns that hint at deeper issues like caliper seizure or worn bushings.",
     icon: "gauge",
@@ -77,6 +89,8 @@ export const services: Service[] = [
     slug: "transmission-repair",
     title: "Mercedes-Benz Transmission Repair",
     short: "7G-Tronic & 9G-Tronic specialists — rebuilds, services, valve bodies.",
+    answer:
+      "Mercedes 7G-Tronic and 9G-Tronic transmission service at Euro Heaven Dandenong starts from $650, with conductor plate, valve body, and torque converter work handled in-house using MB-approved 236.14 / 236.15 fluid — typically saving 30–50% versus dealer pricing.",
     description:
       "Mercedes transmissions are some of the most intricate gearboxes on the road — and we know them intimately, from the 722.9 7G-Tronic to the 9G-Tronic 725.0 and the dual-clutch 724.0. Whether it's a conductor-plate replacement, valve-body rebuild, torque converter service or routine fluid change with MB 236.14 / 236.15 fluid, we diagnose the root cause rather than guess. You save thousands over dealer pricing without compromising on precision — and every job is road-tested before handover.",
     icon: "cog",
@@ -106,6 +120,8 @@ export const services: Service[] = [
     slug: "diagnostics",
     title: "Mercedes-Benz Diagnostics",
     short: "STAR / Xentry diagnostics — we find what generic scanners can't.",
+    answer:
+      "A Mercedes Xentry / STAR factory diagnostic scan at Euro Heaven Dandenong starts from $165 and takes 30–60 minutes. We read every control module — engine, transmission, ABS, SRS, airmatic, infotainment — and hand you a written report explaining exactly what's wrong and what the fix will cost.",
     description:
       "Using the same Mercedes-Benz Xentry / STAR factory diagnostic equipment that dealerships run, our technicians can read every control module in your vehicle — engine, transmission, ABS, SRS, airmatic, infotainment and more. We perform SCN coding, variant coding, module programming and live data analysis, and we're trained to track down the intermittent faults that generic OBD scanners silently miss. You walk away with a written report explaining exactly what's happening and what it'll take to fix.",
     icon: "activity",
@@ -129,6 +145,8 @@ export const services: Service[] = [
     slug: "air-conditioning",
     title: "Mercedes-Benz Air Conditioning",
     short: "R134a & R1234yf regassing, compressor & evaporator repairs.",
+    answer:
+      "Mercedes air-conditioning service at Euro Heaven Dandenong starts from $180 for a regas (R134a or R1234yf), with leak detection, compressor and evaporator repair, and climate-control module coding — including the well-known dual-zone blend-door actuator fault on W204 and W212 models.",
     description:
       "Melbourne summers are no joke, and a failing Mercedes climate control system is a miserable way to spend them. We service both R134a (pre-2017 models) and R1234yf systems, repair or replace compressors, evaporators, condensers, and chase down climate-control module faults — including the notoriously common dual-zone blend-door actuator failure on W204 and W212 models. Every major AC repair includes nitrogen leak testing and full recharge, so the cold air lasts past the next summer.",
     icon: "snowflake",
@@ -152,6 +170,8 @@ export const services: Service[] = [
     slug: "pre-purchase-inspection",
     title: "Mercedes-Benz Pre-Purchase Inspection",
     short: "Thinking of buying a used Benz? Get an expert's opinion first.",
+    answer:
+      "A Mercedes pre-purchase inspection at Euro Heaven Dandenong starts from $295 and includes a 120-point check, full Xentry diagnostic scan, body and chassis assessment, service-history review, and a detailed written report with photos — so you know exactly what you're buying before you sign.",
     description:
       "Thinking of buying a used Benz? Our 120-point Pre-Purchase Inspection covers the mechanical condition, full Xentry diagnostic scan of every electronic module, body and chassis integrity check, interior condition assessment, and a deep analysis of the service history. You walk away with a detailed written report (including photos) so you can negotiate the price — or walk away from a bad buy — with total confidence. Mobile inspections available across Melbourne metro for an additional call-out fee.",
     icon: "shield-check",

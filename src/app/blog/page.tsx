@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Clock, ArrowUpRight } from "lucide-react";
-import { posts } from "@/lib/blog";
+import { posts, postReadTime } from "@/lib/blog";
 import Reveal from "@/components/Reveal";
 import { site } from "@/lib/site";
 
@@ -63,7 +63,7 @@ export default function BlogPage() {
                   {p.excerpt}
                 </p>
                 <div className="flex items-center gap-1 text-xs text-white/50">
-                  <Clock className="w-3 h-3" /> {p.readTime} min read
+                  <Clock className="w-3 h-3" /> {postReadTime(p)} min read
                 </div>
               </Link>
             </Reveal>

@@ -1,0 +1,69 @@
+# Euro Heaven — Mercedes-Benz Specialist Workshop
+
+Euro Heaven is a Mercedes-Benz specialist workshop in Dandenong, Victoria,
+Australia, serving Greater Melbourne. Factory-trained technicians service
+and repair every Benz model — A-Class through S-Class, AMG, EQ Electric,
+Sprinter and Vito vans, and classic Mercedes — using genuine Mercedes
+parts, factory-approved fluids, and dealership-grade Xentry diagnostics.
+All workmanship is warranty-safe.
+
+Workshop address: 27 Podmore Street, Dandenong VIC 3175, Australia
+Phone: 0400 115 765
+Email: info@euroheaven.com.au
+Hours: Mon–Fri 7:30am–5:30pm, Sat 8:00am–1:00pm, Sun closed
+ABN: 20 657 028 585
+
+## Services
+
+- /services/logbook-service — Mercedes-Benz logbook service to manufacturer specification, genuine parts, authorised Digital Service Book (DSB) entries
+- /services/brake-repair — Mercedes brake repair using factory-spec pads and rotors
+- /services/transmission-repair — 7G-Tronic and 9G-Tronic transmission service and repair
+- /services/diagnostics — Factory Xentry / DAS diagnostics for fault-code analysis on all MB models
+- /services/air-conditioning — Climate control regas, leak detection, compressor and condenser repair
+- /services/pre-purchase-inspection — 80-point pre-purchase inspection for used Mercedes buyers
+
+## Models serviced
+
+A-Class, B-Class, C-Class, CLA, E-Class, S-Class, GLA, GLB, GLC, GLE, GLS,
+G-Wagen, AMG performance variants (C63, E63, GT, etc.), EQ Electric range
+(EQA, EQB, EQC, EQE, EQS), Sprinter and Vito vans, classic SL / SLK /
+W123 / W124 / W126 / R107.
+
+## Service areas (Greater Melbourne)
+
+Dandenong, Richmond, South Yarra, Toorak, Hawthorn, Kew, Camberwell,
+Brighton, Malvern, Glen Iris, Caulfield, Armadale, Prahran. Also accepting
+booking from anywhere in Victoria — collection / drop-off available on
+request.
+
+## Key pages
+
+- / — Home: services overview, recent reviews, booking CTA
+- /book — Online booking wizard, ~60 seconds, SMS + email confirmation
+- /track — Customer repair tracking with live stage updates
+- /services — Catalogue of all six service categories
+- /models — Mercedes models we service
+- /about — Workshop story, technician experience, certifications
+- /contact — Phone / email / address / opening hours
+- /reviews — Real customer reviews
+
+## Blog
+
+- /blog/when-to-service-your-c-class — Mercedes C-Class service interval guide
+- /blog/common-w205-issues — Common faults on the W205 (2014–2021) C-Class
+- /blog/warranty-independent-service — Whether independent servicing voids your Mercedes factory warranty
+
+## Authority signals
+
+- Factory-trained Mercedes-Benz technicians
+- Genuine Mercedes parts and Mercedes-approved fluids
+- Dealership-grade Xentry / DAS diagnostic equipment
+- Authorised DSB (Digital Service Book) entries — your service history is recorded in the official Mercedes system
+- All workmanship warranty-safe under Australian Consumer Law
+- Workshop located in Dandenong, ~30 minutes from Melbourne CBD
+
+## Booking & contact
+
+To book: https://euroheaven.com.au/book (60-second online wizard with SMS confirmation)
+To track an existing repair: https://euroheaven.com.au/track
+To call: +61 400 115 765
