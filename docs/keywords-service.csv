@@ -1,0 +1,133 @@
+cluster_id,role,keyword,intent,volume_band,target_url,notes
+# Format: cluster_id groups 1 primary + 4 secondary transactional keywords per service / matrix page
+# volume_band: high (500+/mo AU est), medium (50-500), low (under 50 — hyper-local long-tail)
+# target_url: existing service page, suburb page, or matrix cell
+# Filter applied: no "near me" (Google flags as spam per the video), commercial / transactional intent only
+#
+# === TIER 1 — Generic service pages (6 services × Melbourne) ===
+#
+S1,primary,mercedes logbook service melbourne,Transactional,medium,/services/logbook-service,Phase A title rewrite already targets this
+S1,secondary,mercedes log book service melbourne,Transactional,medium,/services/logbook-service,common misspelling — Google merges
+S1,secondary,mercedes a service melbourne,Transactional,medium,/services/logbook-service,
+S1,secondary,mercedes b service melbourne,Transactional,low,/services/logbook-service,
+S1,secondary,mercedes scheduled maintenance melbourne,Transactional,low,/services/logbook-service,
+#
+S2,primary,mercedes brake repair melbourne,Transactional,medium,/services/brake-repair,
+S2,secondary,mercedes brake replacement melbourne,Transactional,medium,/services/brake-repair,
+S2,secondary,mercedes brake pad replacement cost,Transactional,medium,/services/brake-repair,commercial intent — price comparison
+S2,secondary,mercedes brake disc replacement,Transactional,low,/services/brake-repair,
+S2,secondary,amg brake repair melbourne,Transactional,low,/services/brake-repair,higher CPC bracket
+#
+S3,primary,mercedes transmission repair melbourne,Transactional,medium,/services/transmission-repair,
+S3,secondary,mercedes 7g tronic repair,Transactional,low,/services/transmission-repair,
+S3,secondary,mercedes 9g tronic service,Transactional,low,/services/transmission-repair,
+S3,secondary,mercedes gearbox repair melbourne,Transactional,low,/services/transmission-repair,UK/AU phrasing
+S3,secondary,mercedes transmission fluid change,Transactional,medium,/services/transmission-repair,
+#
+S4,primary,mercedes diagnostics melbourne,Transactional,medium,/services/diagnostics,
+S4,secondary,mercedes xentry scan melbourne,Transactional,low,/services/diagnostics,enthusiast-tier search
+S4,secondary,mercedes fault code reader melbourne,Transactional,medium,/services/diagnostics,
+S4,secondary,mercedes engine diagnostic cost,Transactional,medium,/services/diagnostics,
+S4,secondary,mercedes star diagnostic melbourne,Transactional,low,/services/diagnostics,
+#
+S5,primary,mercedes air conditioning service melbourne,Transactional,medium,/services/air-conditioning,
+S5,secondary,mercedes ac regas melbourne,Transactional,medium,/services/air-conditioning,seasonal Oct-Feb
+S5,secondary,mercedes climate control repair,Transactional,low,/services/air-conditioning,
+S5,secondary,mercedes ac compressor replacement,Transactional,low,/services/air-conditioning,
+S5,secondary,mercedes r1234yf regas,Transactional,low,/services/air-conditioning,post-2017 cars
+#
+S6,primary,mercedes pre purchase inspection melbourne,Transactional,medium,/services/pre-purchase-inspection,strong commercial intent
+S6,secondary,used mercedes inspection melbourne,Transactional,medium,/services/pre-purchase-inspection,
+S6,secondary,mercedes ppi melbourne,Transactional,low,/services/pre-purchase-inspection,industry abbreviation
+S6,secondary,mobile mercedes inspection melbourne,Transactional,low,/services/pre-purchase-inspection,
+S6,secondary,mercedes mechanic inspection cost,Transactional,medium,/services/pre-purchase-inspection,
+#
+# === TIER 2 — Specialist / mechanic regional ===
+#
+S7,primary,mercedes specialist melbourne,Transactional,high,/services,top-of-funnel — high competition
+S7,secondary,mercedes mechanic melbourne,Transactional,high,/services,
+S7,secondary,european mechanic melbourne,Transactional,medium,/services,broader category
+S7,secondary,benz specialist melbourne,Transactional,low,/services,colloquial
+S7,secondary,mercedes service centre melbourne,Transactional,medium,/services,
+#
+S8,primary,mercedes specialist dandenong,Transactional,medium,/about,branded with our exact location — winnable
+S8,secondary,mercedes mechanic dandenong,Transactional,medium,/about,
+S8,secondary,european car specialist dandenong,Transactional,low,/about,
+S8,secondary,mercedes service dandenong,Transactional,medium,/mercedes-service/dandenong,need to add Dandenong to suburb list (currently missing) or redirect
+S8,secondary,euro car repair dandenong,Transactional,low,/about,
+#
+# === TIER 3 — High-priority service × suburb matrix cells (already exist at /services/[slug]/[suburb]) ===
+#
+S9,primary,mercedes service toorak,Transactional,medium,/services/logbook-service/toorak,affluent demo + high CPC
+S9,secondary,mercedes mechanic toorak,Transactional,medium,/services/logbook-service/toorak,
+S9,secondary,mercedes specialist toorak,Transactional,low,/services/logbook-service/toorak,
+S9,secondary,s class service toorak,Transactional,low,/services/logbook-service/toorak,
+S9,secondary,amg service toorak,Transactional,low,/services/logbook-service/toorak,
+#
+S10,primary,mercedes brake repair toorak,Transactional,low,/services/brake-repair/toorak,
+S10,secondary,mercedes pads toorak,Transactional,low,/services/brake-repair/toorak,
+S10,secondary,amg brake repair toorak,Transactional,low,/services/brake-repair/toorak,
+S10,secondary,carbon ceramic brake service toorak,Transactional,low,/services/brake-repair/toorak,niche but high-value
+S10,secondary,mercedes brake replacement toorak,Transactional,low,/services/brake-repair/toorak,
+#
+S11,primary,mercedes service brighton,Transactional,medium,/services/logbook-service/brighton,bayside + AMG concentration
+S11,secondary,mercedes mechanic brighton,Transactional,medium,/services/logbook-service/brighton,
+S11,secondary,mercedes specialist brighton,Transactional,low,/services/logbook-service/brighton,
+S11,secondary,e class service brighton,Transactional,low,/services/logbook-service/brighton,
+S11,secondary,amg service brighton,Transactional,low,/services/logbook-service/brighton,
+#
+S12,primary,mercedes service malvern,Transactional,medium,/services/logbook-service/malvern,
+S12,secondary,mercedes mechanic malvern,Transactional,medium,/services/logbook-service/malvern,
+S12,secondary,c class service malvern,Transactional,low,/services/logbook-service/malvern,
+S12,secondary,glc service malvern,Transactional,low,/services/logbook-service/malvern,
+S12,secondary,mercedes diagnostic malvern,Transactional,low,/services/diagnostics/malvern,
+#
+S13,primary,mercedes service hawthorn,Transactional,medium,/services/logbook-service/hawthorn,
+S13,secondary,mercedes mechanic hawthorn,Transactional,medium,/services/logbook-service/hawthorn,
+S13,secondary,c class service hawthorn,Transactional,low,/services/logbook-service/hawthorn,
+S13,secondary,e class service hawthorn,Transactional,low,/services/logbook-service/hawthorn,
+S13,secondary,glc service hawthorn,Transactional,low,/services/logbook-service/hawthorn,
+#
+S14,primary,mercedes service camberwell,Transactional,medium,/services/logbook-service/camberwell,
+S14,secondary,mercedes mechanic camberwell,Transactional,medium,/services/logbook-service/camberwell,
+S14,secondary,glc service camberwell,Transactional,low,/services/logbook-service/camberwell,
+S14,secondary,gle service camberwell,Transactional,low,/services/logbook-service/camberwell,
+S14,secondary,mercedes specialist camberwell,Transactional,low,/services/logbook-service/camberwell,
+#
+S15,primary,mercedes service glen waverley,Transactional,medium,/services/logbook-service/glen-waverley,closer to workshop = easier to rank
+S15,secondary,mercedes mechanic glen waverley,Transactional,medium,/services/logbook-service/glen-waverley,
+S15,secondary,c class service glen waverley,Transactional,low,/services/logbook-service/glen-waverley,
+S15,secondary,glc service glen waverley,Transactional,low,/services/logbook-service/glen-waverley,
+S15,secondary,european car service glen waverley,Transactional,low,/services/logbook-service/glen-waverley,
+#
+# === TIER 4 — Model-specific transactional (no suburb — broader Melbourne) ===
+#
+S16,primary,c63 service melbourne,Transactional,medium,/services/logbook-service,AMG enthusiast — high CPC
+S16,secondary,c63 amg service melbourne,Transactional,medium,/services/logbook-service,
+S16,secondary,c63 maintenance cost,Transactional,medium,/services/logbook-service,research stage
+S16,secondary,c63 specialist melbourne,Transactional,low,/services/logbook-service,
+S16,secondary,c63 brake service melbourne,Transactional,low,/services/brake-repair,
+#
+S17,primary,e63 service melbourne,Transactional,low,/services/logbook-service,
+S17,secondary,e63 amg service melbourne,Transactional,low,/services/logbook-service,
+S17,secondary,e63 specialist melbourne,Transactional,low,/services/logbook-service,
+S17,secondary,e63 brake repair melbourne,Transactional,low,/services/brake-repair,
+S17,secondary,e63 transmission service,Transactional,low,/services/transmission-repair,
+#
+S18,primary,glc service melbourne,Transactional,medium,/services/logbook-service,popular SUV — high family volume
+S18,secondary,glc 200 service melbourne,Transactional,low,/services/logbook-service,
+S18,secondary,glc 300 service cost,Transactional,medium,/services/logbook-service,
+S18,secondary,glc maintenance schedule,Transactional,low,/services/logbook-service,
+S18,secondary,glc brake replacement melbourne,Transactional,low,/services/brake-repair,
+#
+S19,primary,c-class service melbourne,Transactional,medium,/services/logbook-service,
+S19,secondary,c200 service melbourne,Transactional,medium,/services/logbook-service,
+S19,secondary,c300 service melbourne,Transactional,medium,/services/logbook-service,
+S19,secondary,c-class repair melbourne,Transactional,low,/services/logbook-service,
+S19,secondary,c-class brake service melbourne,Transactional,low,/services/brake-repair,
+#
+S20,primary,sprinter van service melbourne,Transactional,medium,/services/logbook-service,commercial fleet — high LTV
+S20,secondary,mercedes vito service melbourne,Transactional,low,/services/logbook-service,
+S20,secondary,sprinter mechanic melbourne,Transactional,medium,/services/logbook-service,
+S20,secondary,mercedes commercial vehicle service,Transactional,low,/services/logbook-service,
+S20,secondary,sprinter brake service melbourne,Transactional,low,/services/brake-repair,
