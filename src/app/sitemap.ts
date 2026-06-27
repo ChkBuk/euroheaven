@@ -40,12 +40,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  const suburbUrls: MetadataRoute.Sitemap = site.suburbs.map((name) => ({
-    url: `${base}/mercedes-service/${name.toLowerCase().replace(/\s+/g, "-")}`,
+  const suburbUrls: MetadataRoute.Sitemap = site.suburbs.map((s) => ({
+    url: `${base}/mercedes-service/${s.slug}`,
     lastModified: now,
     changeFrequency: "monthly",
     priority: 0.6,
   }));
+
+  // Service × Suburb matrix — 6 services × 30 suburbs = 180 pages.
+  // Each renders at /services/{service-slug}/{suburb-slug} with
+  // suburb-unique local content + AutoRepair JSON-LD bound to that
+  // suburb. The cartesian product is generated server-side here so
+  // Google discovers every combination on the next sitemap fetch.
+  const matrixUrls: MetadataRoute.Sitemap = services.flatMap((sv) =>
+    site.suburbs.map((sb) => ({
+      url: `${base}/services/${sv.slug}/${sb.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.55,
+    }))
+  );
 
   const postUrls: MetadataRoute.Sitemap = posts.map((p) => ({
     url: `${base}/blog/${p.slug}`,
@@ -54,5 +68,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  return [...statics, ...legalUrls, ...serviceUrls, ...suburbUrls, ...postUrls];
+  return [
+    ...statics,
+    ...legalUrls,
+    ...serviceUrls,
+    ...suburbUrls,
+    ...matrixUrls,
+    ...postUrls,
+  ];
 }

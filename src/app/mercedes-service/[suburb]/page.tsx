@@ -10,17 +10,16 @@ import ServiceIcon from "@/components/ServiceIcon";
 import Reveal from "@/components/Reveal";
 import BreadcrumbJsonLd from "@/components/BreadcrumbJsonLd";
 
-const suburbSlugs = site.suburbs.map((s) => ({
-  slug: s.toLowerCase().replace(/\s+/g, "-"),
-  name: s,
-}));
-
+// Suburbs are now richer objects (name, slug, distanceKm,
+// drivetimeMin, popularModels, localNote) defined in site.ts — used
+// here to render genuinely-unique content per suburb, not a template
+// with the suburb name swapped in.
 export function generateStaticParams() {
-  return suburbSlugs.map((s) => ({ suburb: s.slug }));
+  return site.suburbs.map((s) => ({ suburb: s.slug }));
 }
 
 function getSuburb(slug: string) {
-  return suburbSlugs.find((s) => s.slug === slug);
+  return site.suburbs.find((s) => s.slug === slug);
 }
 
 type RouteParams = Promise<{ suburb: string }>;
@@ -117,10 +116,24 @@ export default async function SuburbPage({
             <h1 className="heading-1 mb-6 max-w-3xl">
               Mercedes-Benz Service <span className="text-accent">{s.name}</span>
             </h1>
-            <p className="lead max-w-3xl mb-8">
-              {site.name} is the trusted Mercedes-Benz specialist for{" "}
-              {s.name} residents. Factory-level servicing, repair, and diagnostics
-              — just minutes from {s.name}, with courtesy vehicles on request.
+            {/* Suburb-unique hero copy. Uses the localNote, distance
+                + drivetime, and popular-models fields from site.ts so
+                every suburb page reads differently — kills the
+                near-duplicate-content problem Google's Helpful Content
+                update penalises. */}
+            <p className="lead max-w-3xl mb-4">
+              {site.name} is the Mercedes-Benz specialist workshop for{" "}
+              {s.name} residents — {s.distanceKm} km / {s.drivetimeMin}{" "}
+              minutes from our Dandenong workshop, with factory-trained
+              technicians and a courtesy vehicle available on request.
+            </p>
+            <p className="text-white/75 max-w-3xl mb-6">
+              {s.localNote} The Mercedes models we see most from{" "}
+              {s.name} are the{" "}
+              <strong className="text-white">
+                {s.popularModels.join(", ")}
+              </strong>
+              .
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/book" className="btn-primary">
@@ -217,18 +230,27 @@ export default async function SuburbPage({
             <div className="card-dark">
               <h3 className="text-xl font-semibold mb-4">Also serving nearby</h3>
               <div className="flex flex-wrap gap-2">
+                {/* Nearby suburbs — picked by distance proximity to
+                    the current suburb so the cross-links read as
+                    geographically sensible recommendations, not a
+                    random list. Internal linking pattern from Phase C
+                    of the SEO plan. */}
                 {site.suburbs
-                  .filter((x) => x !== s.name)
+                  .filter((x) => x.slug !== s.slug)
+                  .slice()
+                  .sort(
+                    (a, b) =>
+                      Math.abs(a.distanceKm - s.distanceKm) -
+                      Math.abs(b.distanceKm - s.distanceKm)
+                  )
                   .slice(0, 8)
                   .map((other) => (
                     <Link
-                      key={other}
-                      href={`/mercedes-service/${other
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")}`}
+                      key={other.slug}
+                      href={`/mercedes-service/${other.slug}`}
                       className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-sm text-white/80 hover:border-accent hover:text-accent transition-colors"
                     >
-                      {other}
+                      {other.name}
                     </Link>
                   ))}
               </div>
