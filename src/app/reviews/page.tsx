@@ -6,9 +6,16 @@ import { site } from "@/lib/site";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
-  title: "Customer Reviews",
-  description: `Real reviews from Melbourne Mercedes-Benz owners. ${site.stats.googleRating}★ average rating from ${site.stats.googleReviewCount}+ customers.`,
+  title: `Customer Reviews — ${site.stats.googleRating}★ from ${site.stats.googleReviewCount}+ Mercedes Owners | Euro Heaven`,
+  description: `Real reviews from Melbourne Mercedes-Benz owners. ${site.stats.googleRating}★ average rating from ${site.stats.googleReviewCount}+ customers across logbook service, brakes, AMG and transmission work.`,
   alternates: { canonical: "/reviews" },
+  openGraph: {
+    title: `Customer Reviews — ${site.stats.googleRating}★ from ${site.stats.googleReviewCount}+ Mercedes Owners | Euro Heaven`,
+    description: `${site.stats.googleRating}★ average rating from real Mercedes-Benz customers across Melbourne. Read first-hand experiences from logbook, brake, transmission and AMG work.`,
+    url: `${site.url}/reviews`,
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
 };
 
 export const dynamic = "force-dynamic";

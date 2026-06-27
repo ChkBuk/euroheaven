@@ -28,8 +28,19 @@ export const site = {
   stats: {
     yearsInBusiness: 4,
     carsServiced: "12,000+",
+    // Marketing-display numbers — used on the home page and AI chat
+    // prompt. These can stay aspirational/long-term; they don't appear
+    // in JSON-LD schema.
     googleRating: 4.9,
     googleReviewCount: 284,
+    // Schema-safe numbers — must reflect the ACTUAL live Google
+    // Business Profile review state. Used by AggregateRating JSON-LD
+    // in StructuredData.tsx, gated to emit only when
+    // verifiedReviewCount >= 5 to keep Google's rich-result policy
+    // happy. Update these numbers manually as the GBP grows; once
+    // they're >= 5, the rating stars start appearing in SERPs.
+    verifiedGoogleRating: 5.0,
+    verifiedGoogleReviewCount: 3,
   },
   suburbs: [
     "Richmond",

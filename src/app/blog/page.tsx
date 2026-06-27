@@ -3,12 +3,21 @@ import Link from "next/link";
 import { Clock, ArrowUpRight } from "lucide-react";
 import { posts } from "@/lib/blog";
 import Reveal from "@/components/Reveal";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Blog — Mercedes-Benz Tips & Insights",
+  title: "Mercedes-Benz Maintenance Tips & Owner Guides | Euro Heaven Melbourne",
   description:
-    "Maintenance tips, model-specific guides, and Mercedes-Benz ownership advice from Melbourne's specialists.",
+    "Maintenance tips, model-specific guides, common-issue diagnostics, and Mercedes-Benz ownership advice — written by Melbourne's factory-trained MB specialists.",
   alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "Mercedes-Benz Maintenance Tips & Owner Guides | Euro Heaven Melbourne",
+    description:
+      "Honest, technician-written guides on Mercedes service intervals, AMG ownership, common issues and pre-purchase checks — from Melbourne's MB specialists.",
+    url: `${site.url}/blog`,
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
 };
 
 export default function BlogPage() {

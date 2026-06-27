@@ -33,13 +33,15 @@ export async function generateMetadata({
   const { suburb } = await params;
   const s = getSuburb(suburb);
   if (!s) return { title: "Not found" };
-  const desc = `Mercedes-Benz specialist servicing and repairs for ${s.name} owners. Genuine parts, factory diagnostics, fully warranty compliant.`;
+  // CTR formula: [Topic] [Suburb] — [USP] | [Trust Signal]
+  const title = `Mercedes-Benz Service ${s.name} — Local Specialist, Factory Trained | Euro Heaven`;
+  const desc = `Mercedes-Benz service and repairs for ${s.name} owners. Factory-trained technicians, genuine Mercedes parts, dealership-grade Xentry diagnostics — warranty-safe.`;
   return {
-    title: `Mercedes-Benz Service ${s.name}`,
+    title,
     description: desc,
     alternates: { canonical: `/mercedes-service/${s.slug}` },
     openGraph: {
-      title: `Mercedes-Benz Service ${s.name}`,
+      title,
       description: desc,
       url: `${site.url}/mercedes-service/${s.slug}`,
       type: "website",

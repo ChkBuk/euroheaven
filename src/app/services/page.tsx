@@ -8,14 +8,16 @@ import { site } from "@/lib/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mercedes-Benz Services Melbourne",
+  title:
+    "Mercedes-Benz Service Melbourne — Logbook, Brakes, AMG | Factory Diagnostics",
   description:
-    "Full Mercedes-Benz servicing and repairs in Melbourne — logbook service, brakes, transmission, diagnostics, AC, pre-purchase inspections.",
+    "Mercedes-Benz servicing in Melbourne by factory-trained technicians. Logbook service, brakes, transmission, Xentry diagnostics, AC, pre-purchase inspections — all warranty-safe.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Mercedes-Benz Services Melbourne",
+    title:
+      "Mercedes-Benz Service Melbourne — Logbook, Brakes, AMG | Factory Diagnostics",
     description:
-      "Full Mercedes-Benz servicing and repairs in Melbourne — logbook service, brakes, transmission, diagnostics, AC, pre-purchase inspections.",
+      "Mercedes-Benz servicing in Melbourne by factory-trained technicians. Genuine parts, Xentry diagnostics, warranty-safe workmanship — every job.",
     url: `${site.url}/services`,
     type: "website",
     images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],

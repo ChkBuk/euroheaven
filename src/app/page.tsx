@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -17,6 +18,28 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { site } from "@/lib/site";
+
+// Home page owns its own metadata rather than inheriting the root
+// fallback. The title uses the CTR formula
+// `[Topic] [Region] | [USP] | [Trust Signal]` so the SERP entry leads
+// with the most click-worthy info (location + trust signals) instead
+// of a generic brand+tagline.
+export const metadata: Metadata = {
+  title:
+    "Mercedes-Benz Specialist Dandenong — Factory-Trained, Warranty-Safe Service",
+  description:
+    "Mercedes-Benz workshop in Dandenong, Melbourne. Factory-trained technicians, genuine parts, dealership-grade Xentry diagnostics. Logbook service, brakes, AMG — book online in 60 seconds.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title:
+      "Mercedes-Benz Specialist Dandenong — Factory-Trained, Warranty-Safe Service",
+    description:
+      "Mercedes-Benz workshop in Dandenong, Melbourne. Factory-trained technicians, genuine parts, Xentry diagnostics — warranty-safe.",
+    url: site.url,
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
+};
 import { img } from "@/lib/images";
 import FAQ from "@/components/FAQ";
 import Reveal from "@/components/Reveal";

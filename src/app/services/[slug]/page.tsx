@@ -25,13 +25,16 @@ export async function generateMetadata({
   const { slug } = await params;
   const service = getService(slug);
   if (!service) return { title: "Service not found" };
+  // CTR formula: [Service] [Suburb] — [USP] | [Trust Signal]
+  const title = `${service.title} Dandenong — Genuine Parts, Warranty-Safe | Euro Heaven`;
+  const description = `${service.description} Factory-trained Mercedes technicians, genuine parts, Xentry diagnostics — book online in 60 seconds.`;
   return {
-    title: `${service.title} Melbourne`,
-    description: service.description,
+    title,
+    description,
     alternates: { canonical: `/services/${service.slug}` },
     openGraph: {
-      title: `${service.title} Melbourne`,
-      description: service.description,
+      title,
+      description,
       url: `${site.url}/services/${service.slug}`,
       type: "website",
       images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],

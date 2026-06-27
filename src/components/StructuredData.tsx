@@ -44,11 +44,20 @@ export default function StructuredData() {
       "@type": "State",
       name: "Victoria, Australia",
     },
-    // NOTE: aggregateRating intentionally omitted. Google's structured
-    // data guidelines require ratings to reflect actual customer
-    // reviews from the source page; emitting placeholder numbers risks
-    // a manual action. Restore once you can pull live ratings from the
-    // Google Places API or the on-page Reviews component.
+    // AggregateRating — emitted only when the verified Google review
+    // count is >= 5. Below that threshold Google penalises thin
+    // schema-supplied ratings (manual action risk), and the marketing
+    // upside isn't there anyway with only 1–4 reviews. Owner bumps
+    // `verifiedGoogleReviewCount` in src/lib/site.ts as GBP grows.
+    ...(site.stats.verifiedGoogleReviewCount >= 5
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: site.stats.verifiedGoogleRating.toString(),
+            reviewCount: site.stats.verifiedGoogleReviewCount.toString(),
+          },
+        }
+      : {}),
     makesOffer: {
       "@type": "Offer",
       itemOffered: {

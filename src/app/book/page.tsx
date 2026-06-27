@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
 import BookingWizard from "@/components/BookingWizard";
 import Reveal from "@/components/Reveal";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Book an Appointment",
+  title: "Book Mercedes-Benz Service Melbourne — 60-Second Online Booking",
   description:
-    "Book your Mercedes-Benz service online in under 60 seconds. Choose service, time, and we'll confirm by email and SMS.",
+    "Book your Mercedes-Benz service online in under 60 seconds. Choose service, time, drop-off — confirmation by email + SMS within minutes.",
   alternates: { canonical: "/book" },
+  openGraph: {
+    title: "Book Mercedes-Benz Service Melbourne — 60-Second Online Booking",
+    description:
+      "Pick your service, drop-off time, and we'll send confirmation by SMS + email. Factory-trained Mercedes specialists in Dandenong.",
+    url: `${site.url}/book`,
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
 };
 
 export default function BookPage() {

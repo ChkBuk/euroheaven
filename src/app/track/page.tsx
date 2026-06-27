@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
 import TrackForm from "@/components/TrackForm";
 import Reveal from "@/components/Reveal";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Track My Repair",
+  title: "Track Your Mercedes Repair — Live SMS Updates | Euro Heaven",
   description:
-    "Check the real-time status of your Mercedes-Benz repair. Enter your booking reference or request a magic-link login.",
+    "Check the real-time status of your Mercedes repair at Euro Heaven Melbourne. Live stage updates, SMS notifications, and full activity timeline.",
   alternates: { canonical: "/track" },
+  openGraph: {
+    title: "Track Your Mercedes Repair — Live SMS Updates | Euro Heaven",
+    description:
+      "Real-time repair tracking for Mercedes-Benz customers. Live SMS updates, full stage timeline, secure access by booking reference.",
+    url: `${site.url}/track`,
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
 };
 
 export default async function TrackPage({
