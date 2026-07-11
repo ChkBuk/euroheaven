@@ -15,8 +15,8 @@ export const site = {
     country: "Australia",
   },
   hours: [
-    { day: "Mon – Fri", time: "7:30am – 5:30pm" },
-    { day: "Saturday", time: "8:00am – 1:00pm" },
+    { day: "Mon – Fri", time: "8:30am – 5:00pm" },
+    { day: "Saturday", time: "9:00am – 2:30pm" },
     { day: "Sunday", time: "Closed" },
   ],
   abn: "20 657 028 585",

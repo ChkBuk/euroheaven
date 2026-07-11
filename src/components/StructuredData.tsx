@@ -30,14 +30,14 @@ export default function StructuredData() {
       {
         "@type": "OpeningHoursSpecification",
         dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        opens: "07:30",
-        closes: "17:30",
+        opens: "08:30",
+        closes: "17:00",
       },
       {
         "@type": "OpeningHoursSpecification",
         dayOfWeek: "Saturday",
-        opens: "08:00",
-        closes: "13:00",
+        opens: "09:00",
+        closes: "14:30",
       },
     ],
     areaServed: {
